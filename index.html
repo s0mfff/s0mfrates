@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>РЗТ — Музыка</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-color: #111113;
@@ -114,6 +115,7 @@
         .btn-group { display: flex; gap: 10px; }
         .action-btn { background: #ffffff; color: #000000; border: none; padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: bold; cursor: pointer; }
         .save-btn { background: var(--blue-accent); color: #fff; }
+        .card-btn { background: var(--purple-accent); color: #fff; }
         .action-btn:active { transform: scale(0.95); }
 
         #manual-add { display: none; margin-top: 12px; text-align: center; }
@@ -239,7 +241,6 @@
         .modal-release-header .info .artist { color: var(--blue-accent); font-size: 0.9rem; }
         .modal-release-header .info .meta { color: var(--text-muted); font-size: 0.8rem; }
 
-        /* Модальные слайдеры */
         .modal-sliders .sliders-group {
             border: none;
             padding: 0;
@@ -297,6 +298,108 @@
         }
         .criteria-content .vibe-title {
             color: var(--purple-accent);
+        }
+
+        /* Шаблон карточки для скриншота */
+        #card-template {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 600px;
+            background: var(--bg-color);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            z-index: 9999;
+        }
+        #card-template .card-header {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        #card-template .card-header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            object-fit: cover;
+        }
+        #card-template .card-header .info {
+            display: flex;
+            flex-direction: column;
+        }
+        #card-template .card-header .info .title {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        #card-template .card-header .info .artist {
+            font-size: 1.1rem;
+            color: var(--blue-accent);
+        }
+        #card-template .card-header .info .type {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        #card-template .card-score {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            text-align: center;
+            margin: 8px 0;
+        }
+        #card-template .card-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        #card-template .card-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        #card-template .card-bar .label {
+            width: 130px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: right;
+        }
+        #card-template .card-bar .track {
+            flex: 1;
+            height: 10px;
+            background: #2d2e33;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        #card-template .card-bar .track .fill {
+            height: 100%;
+            border-radius: 5px;
+            background: var(--blue-accent);
+            width: 0%;
+        }
+        #card-template .card-bar .track .fill.vibe-fill {
+            background: var(--purple-accent);
+        }
+        #card-template .card-bar .value {
+            width: 30px;
+            font-weight: bold;
+            color: #fff;
+        }
+        #card-template .card-footer {
+            margin-top: 8px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
+        }
+        #card-template .card-footer span {
+            color: var(--gold);
         }
     </style>
 </head>
@@ -368,7 +471,10 @@
             <div class="score-display" id="score-display">
                 <span class="total" id="total-score">28</span><span class="slash"> / 90</span>
             </div>
-            <button class="action-btn save-btn" id="save-btn">Сохранить</button>
+            <div class="btn-group">
+                <button class="action-btn save-btn" id="save-btn">💾 Сохранить</button>
+                <button class="action-btn card-btn" id="card-btn">📸 Карточка</button>
+            </div>
         </div>
     </div>
 
@@ -460,6 +566,47 @@
                 <p>Ваше субъективное восприятие совокупности элементов релиза: насколько автор сумел передать палитру эмоций и погрузить в атмосферу композиции.</p>
             </div>
         </div>
+    </div>
+
+    <!-- ШАБЛОН КАРТОЧКИ ДЛЯ СКРИНШОТА (скрыт) -->
+    <div id="card-template">
+        <div class="card-header">
+            <img id="card-cover" src="" alt="Cover">
+            <div class="info">
+                <div class="title" id="card-title">Название</div>
+                <div class="artist" id="card-artist">Исполнитель</div>
+                <div class="type" id="card-type">Альбом</div>
+            </div>
+        </div>
+        <div class="card-score" id="card-score">90/90</div>
+        <div class="card-bars">
+            <div class="card-bar">
+                <span class="label">Рифмы / Образы</span>
+                <div class="track"><div class="fill" id="card-rhymes" style="width: 50%;"></div></div>
+                <span class="value" id="card-rhymes-val">5</span>
+            </div>
+            <div class="card-bar">
+                <span class="label">Структура / Ритмика</span>
+                <div class="track"><div class="fill" id="card-structure" style="width: 50%;"></div></div>
+                <span class="value" id="card-structure-val">5</span>
+            </div>
+            <div class="card-bar">
+                <span class="label">Реализация стиля</span>
+                <div class="track"><div class="fill" id="card-style" style="width: 50%;"></div></div>
+                <span class="value" id="card-style-val">5</span>
+            </div>
+            <div class="card-bar">
+                <span class="label">Индивидуальность / Харизма</span>
+                <div class="track"><div class="fill" id="card-charisma" style="width: 50%;"></div></div>
+                <span class="value" id="card-charisma-val">5</span>
+            </div>
+            <div class="card-bar">
+                <span class="label">Атмосфера / Вайб</span>
+                <div class="track"><div class="fill vibe-fill" id="card-vibe" style="width: 10%;"></div></div>
+                <span class="value" id="card-vibe-val">1</span>
+            </div>
+        </div>
+        <div class="card-footer">Оценка по системе <span>РЗТ</span> • raitfroso</div>
     </div>
 
     <script>
@@ -1103,6 +1250,79 @@
 
         criteriaModal.addEventListener('click', (e) => {
             if (e.target === criteriaModal) criteriaModal.classList.remove('active');
+        });
+
+        // --- ГЕНЕРАЦИЯ КАРТОЧКИ (html2canvas) ---
+        document.getElementById('card-btn').addEventListener('click', () => {
+            if (!currentRelease) {
+                tg.showAlert('Сначала выберите релиз и оцените его!');
+                return;
+            }
+
+            // Заполняем шаблон данными
+            document.getElementById('card-cover').src = currentRelease.image || 'https://via.placeholder.com/80';
+            document.getElementById('card-title').textContent = currentRelease.title;
+            document.getElementById('card-artist').textContent = currentRelease.artist;
+            document.getElementById('card-type').textContent = currentRelease.type;
+
+            const score = parseInt(displays.total.textContent);
+            document.getElementById('card-score').textContent = `${score}/90`;
+
+            const vals = {
+                rhymes: parseInt(inputs.rhymes.value),
+                structure: parseInt(inputs.structure.value),
+                style: parseInt(inputs.style.value),
+                charisma: parseInt(inputs.charisma.value),
+                vibe: parseInt(inputs.vibe.value)
+            };
+            document.getElementById('card-rhymes').style.width = (vals.rhymes / 10 * 100) + '%';
+            document.getElementById('card-rhymes-val').textContent = vals.rhymes;
+            document.getElementById('card-structure').style.width = (vals.structure / 10 * 100) + '%';
+            document.getElementById('card-structure-val').textContent = vals.structure;
+            document.getElementById('card-style').style.width = (vals.style / 10 * 100) + '%';
+            document.getElementById('card-style-val').textContent = vals.style;
+            document.getElementById('card-charisma').style.width = (vals.charisma / 10 * 100) + '%';
+            document.getElementById('card-charisma-val').textContent = vals.charisma;
+            document.getElementById('card-vibe').style.width = (vals.vibe / 10 * 100) + '%';
+            document.getElementById('card-vibe-val').textContent = vals.vibe;
+
+            // Делаем блок видимым для скриншота
+            const card = document.getElementById('card-template');
+            card.style.top = '0';
+            card.style.left = '0';
+            card.style.position = 'fixed';
+            card.style.display = 'flex';
+            card.style.zIndex = '9999';
+
+            // Ждём рендеринга
+            setTimeout(() => {
+                html2canvas(card, {
+                    scale: 2, // высокое качество
+                    backgroundColor: '#111113',
+                    allowTaint: false,
+                    useCORS: true
+                }).then(canvas => {
+                    // Скрываем блок обратно
+                    card.style.top = '-9999px';
+                    card.style.left = '-9999px';
+                    card.style.position = 'fixed';
+                    card.style.display = 'flex';
+                    card.style.zIndex = '9999';
+
+                    // Открываем картинку в новой вкладке
+                    const dataUrl = canvas.toDataURL('image/png');
+                    const win = window.open('', '_blank');
+                    if (win) {
+                        win.document.write(`<img src="${dataUrl}" style="max-width:100%;height:auto;">`);
+                        win.document.title = 'Карточка оценки';
+                        win.document.close();
+                    } else {
+                        tg.showAlert('Пожалуйста, разрешите всплывающие окна для этого сайта.');
+                    }
+                }).catch(err => {
+                    tg.showAlert('Ошибка при создании карточки: ' + err);
+                });
+            }, 300);
         });
 
         renderCollection();
