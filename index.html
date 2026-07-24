@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>РЗТ — Музыка</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-color: #111113;
@@ -277,7 +276,6 @@
         .modal-actions .action-btn { flex: 1; }
         .modal-actions .edit-btn { background: var(--purple-accent); color: #fff; }
         .modal-actions .save-edit-btn { background: var(--blue-accent); color: #fff; display: none; }
-        .modal-actions .card-btn { background: var(--gold); color: #000; }
         .edit-mode .modal-actions .save-edit-btn { display: block; }
         .edit-mode .modal-actions .edit-btn { display: none; }
 
@@ -298,128 +296,6 @@
         }
         .criteria-content .vibe-title {
             color: var(--purple-accent);
-        }
-
-        /* Шаблон карточки для скриншота */
-        #card-template {
-            position: fixed;
-            top: -9999px;
-            left: -9999px;
-            width: 600px;
-            background: var(--bg-color);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            z-index: 9999;
-        }
-        #card-template .card-header {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-        #card-template .card-header img {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            border: 2px solid var(--border-color);
-            object-fit: cover;
-        }
-        #card-template .card-header .info {
-            display: flex;
-            flex-direction: column;
-        }
-        #card-template .card-header .info .title {
-            font-size: 1.6rem;
-            font-weight: bold;
-            color: #fff;
-        }
-        #card-template .card-header .info .artist {
-            font-size: 1.1rem;
-            color: var(--blue-accent);
-        }
-        #card-template .card-header .info .type {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-        #card-template .card-score {
-            font-size: 4rem;
-            font-weight: 900;
-            color: var(--gold);
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-            text-align: center;
-            margin: 8px 0;
-        }
-        #card-template .card-bars {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        #card-template .card-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        #card-template .card-bar .label {
-            width: 130px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            text-align: right;
-        }
-        #card-template .card-bar .track {
-            flex: 1;
-            height: 10px;
-            background: #2d2e33;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        #card-template .card-bar .track .fill {
-            height: 100%;
-            border-radius: 5px;
-            background: var(--blue-accent);
-            width: 0%;
-        }
-        #card-template .card-bar .track .fill.vibe-fill {
-            background: var(--purple-accent);
-        }
-        #card-template .card-bar .value {
-            width: 30px;
-            font-weight: bold;
-            color: #fff;
-        }
-        #card-template .card-footer {
-            margin-top: 8px;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 12px;
-        }
-        #card-template .card-footer span {
-            color: var(--gold);
-        }
-
-        /* Модальное окно для карточки */
-        #card-modal .modal-content {
-            max-width: 650px;
-            text-align: center;
-        }
-        #card-modal .modal-content img {
-            width: 100%;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-        }
-        #card-modal .modal-content .download-btn {
-            background: var(--gold);
-            color: #000;
-        }
-        #card-modal .modal-content .hint {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-top: 8px;
         }
     </style>
 </head>
@@ -554,7 +430,6 @@
             <div class="modal-actions">
                 <button class="action-btn edit-btn" id="modal-edit-btn">✏️ Изменить</button>
                 <button class="action-btn save-edit-btn" id="modal-save-edit-btn" style="display:none;">💾 Сохранить</button>
-                <button class="action-btn card-btn" id="modal-card-btn">📸 Карточка</button>
             </div>
         </div>
     </div>
@@ -562,1617 +437,676 @@
     <!-- МОДАЛЬНОЕ ОКНО КРИТЕРИЕВ -->
     <div id="criteria-modal" class="modal-overlay">
         <div class="modal-content">
-">
-            <button class="modal-close" id="            <button class="modal-close" idcriteria-close-btn">✕="criteria-close-btn">✕</button>
-            <h2 style="margin-top:</button>
-            <h2 style 0; color: var(--gold="margin-top: 0; color: var(--);">Критерии 90-балльнойgold);">Критерии 90-балльной системы</h2 системы</h2>
+            <button class="modal-close" id="criteria-close-btn">✕</button>
+            <h2 style="margin-top: 0; color: var(--gold);">Критерии 90-балльной системы</h2>
             <div class="criteria-content">
-                <h3>>
-            <div class="criteria-content">
-               1 <h3>1. Рифмы. Рифмы / Образы</h3>
-                <p>Оцен / Образы</h3ка за текст учитывает особенности музыкального жан>
-                <p>Оценка за текст учитыра или поджанра.вает особенности музыкального жанра или поджанра. Легкая фон Легкая фоновая поп-музыка или электроовая поп-музыка или электронная “долбежка“ длянная “долбежка“ для слэ слэма могут получать максимальную оценку зама могут получать максимальную оценку за довольно тривиальные конструкции. А в довольно тривиальные конструкции. А в некоторых текстоориентированных поджанрах некоторых текстоориентированных поджанрах хи хип-хопа для высшего балп-хопа для высшего балла потребуются изысканла потребуются изысканные рифмоконструкции с глубоким смысные рифмоконструкциилом. Разной музыке прису с глубоким смыслом. Разной музыкеще своё смысловое присуще своё смысловое и текстовое наполнение.</p>
+                <h3>1. Рифмы / Образы</h3>
+                <p>Оценка за текст учитывает особенности музыкального жанра или поджанра. Легкая фоновая поп-музыка или электронная “долбежка“ для слэма могут получать максимальную оценку за довольно тривиальные конструкции. А в некоторых текстоориентированных поджанрах хип-хопа для высшего балла потребуются изысканные рифмоконструкции с глубоким смыслом. Разной музыке присуще своё смысловое и текстовое наполнение.</p>
 
-                и текстовое наполнение.</ <h3>2. Структураp>
+                <h3>2. Структура / Ритмика</h3>
+                <p><strong>Ритмика</strong> — качество “стихотворного ритма“ — мелодичность и эмоциональные контрасты куплетов, припевов, бриджей и прочих отдельных частей песни.<br>
+                <strong>Структура</strong> — насколько разные части песни звучат гармонично между собой по всему хронометражу и образуют цельную конструкцию. В случае альбома учитывается концепт и структура расположения песен в альбоме.</p>
 
-                <h3>2. / Ритмика</h3 Структура / Ритмика</h3>
-                <p><strong>Р>
-                <p><strong>Ритмика</итмика</strong> — качеstrong> — качество “стиство “стихотворного ритмахотворного ритма“ — мелодичность и эмоциональные контрасты куп“ — мелодичность и эмоциональныелетов, припевов, бриджей и контрасты куплетов, при прочих отдельных частей песпевов, бриджей и прочих отдельных частей песни.<brни.<br>
-                <strong>Структура>
-                <strong>Структура</strong> — насколько разные части</strong> — насколько разные части пес песни звучат гармонично между собойни звучат гармонично между собой по по всему хронометражу и образуют цельную конструкцию. всему хронометражу В случае альбома учитывается концепт и структура и образуют цельную конструкцию. В случае расположения песен в альбом альбома учитывается концепт и структура расположения песен в альбоме.</p>
+                <h3>3. Реализация стиля</h3>
+                <p><strong>Работу исполнителя</strong> — качество вокала, речитатива и умение работать с выбранными мелодиями и тактами.<br>
+                <strong>Работу звукорежиссера и саунд-продюсера</strong> — качество сведения песни и инструментала.</p>
 
-                <h3>3. Рее.</p>
+                <h3>4. Индивидуальность / Харизма</h3>
+                <p><strong>Индивидуальность</strong> — специфика тембра голоса и выбранного артистом стиля исполнения — насколько артист самобытен и узнаваем на музыкальном поприще.<br>
+                <strong>Харизма</strong> — насколько артист смог погрузить слушателя в передаваемые эмоции — “верю“ или “не верю“ песне.</p>
 
-                <h3>3ализация стиля</h3. Реализация стиля</h3>
-                <p><strong>Работу исполнителя</>
-                <p><strong>Работstrong> — качество вокалау исполнителя</strong> — качество в, речитатива и умение работать с выбраннымиокала, речитатива и умение работать с выбранными мелодиями и мелодиями и тактами.<br тактами.<br>
-                <strong>Работ>
-                <strong>Работу звукорежу звукорежиссеиссера и саунд-продюсера</strong> — качествора и саунд-продюсе сведения песни и инструментала.</ра</strong> — качество сведения песни и инструментала.</p>
-
-               p>
-
-                <h3>4 <h3>4. Индивидуаль. Индивидуальность / Харизма</h3ность / Харизма</h3>
->
-                <p><strong>Ин                <p><strong>Индивидуальдивидуальность</strong> — специфика тембра голоса и выбранного артиность</strong> — специфика тембра голоса и выбранного артистом стиля исполнения — насколько артистстом стиля исполнения — насколько артист самобытен и узнаваем на самобытен и узнаваем на музыкальном поприще.<br музыкальном поприще.<br>
-                <strong>>
-                <strong>Харизма</strong> —Харизма</strong> — насколько ар насколько артист смог погтист смог погрузить слушарузить слушателя в передаваемтеля в передаваемые эмоции — “верюые эмоции — “верю“ или “не верю“ песне.</p“ или “не верю“ пес>
-
-                <h3 class="vibe-title">не.</p>
-
-                <h3 class="vibe5. Атмосфера / Вайб-title">5. Атмосфера</h3>
-                <p> / Вайб</h3>
-                <p>Ваше субъективное восприятие совокупности элементов релиза: насколько автор сумел передаВаше субъективное восприятие совокупностить палитру эмоций и пог элементов релиза: насколько автор сумел передать палитру эмоций и погрузить в атмосферу композиции.</рузить в атмосферу композиции.</p>
-            </div>
-        </divp>
+                <h3 class="vibe-title">5. Атмосфера / Вайб</h3>
+                <p>Ваше субъективное восприятие совокупности элементов релиза: насколько автор сумел передать палитру эмоций и погрузить в атмосферу композиции.</p>
             </div>
         </div>
     </div>
-
-    <!-- МОДАЛЬНОЕ>
-    </div>
-
-    <!-- МОД ОКНО ДЛЯ КААЛЬНОЕ ОКНО ДРТОЧКИЛЯ КАРТОЧ -->
-    <div id="card-modal" class="modal-overlayКИ -->
-    <">
-        <div class="modal-contentdiv id="card-modal" class="modal-overlay">
-        <div class">
-            <button class="modal="modal-content">
-            <button class="modal-close" id="card-close" id="card-modal-close">✕</button>
-           -modal-close">✕</button>
-            <h <h3 style="color: var(--gold); margin-top3 style="color: var(--gold); margin-top: 0;">Ваша карточ: 0;">Ваша карточка</h3>
-            <img id="card-resultка</h3>
-            <img id="card-result" src="" alt="Карточка оценки">
-            <div style="display: flex" src="" alt="Карточка оценки">
-            <div style="display: flex;; gap: 10px; margin-top: gap: 10px; margin-top: 12px; justify-content: center;">
-                <button 12px; justify-content: center;">
- class="action-btn download-btn" id                <button class="action-btn download-btn" id="card-download-btn">💾 Сохранить="card-download-btn">💾</button Сохранить</button>
-            </div>
-            <p class="hint">>
-            </div>
-            <p class="hint">Нажмите иНажмите и удерживайте картин удерживайте картинку для сохранения</p>
-        </div>
-   ку для сохранения</p>
-        </div>
-
-    <!-- ШАБ </div>
-    </div>
-
-    <!-- ШАБЛОН КАРТЛОН КАРТОЧКИ ДЛЯ СКРИНШОТА (скрыОЧКИ ДЛЯ СКРИНШОТА (скрыт) -->
-   т) -->
-    <div id=" <div id="card-template">
-       card-template">
-        <div class="card-header">
-            <div class="card-header">
-            <img id="card-cover" <img id="card-cover" src="" alt="Cover">
-            <div class src="" alt="Cover">
-            <div class="info="info">
-                <div class="title" id="card-title">Название</div>
-">
-                <div class="title"                <div class="artist" id=" id="card-title">Название</div>
-                <div class="artist" id="card-artist">Исполнитель</div>
-               card-artist">Исполнитель</div>
- <div class="type" id="                <div class="type" id="card-type">Альбом</div>
-            </card-type">Альбом</divdiv>
-        </div>
-       >
-            </div>
-        </div>
-        <div class="card-score" id="card-score">90 <div class="card-score" id="/90</div>
-        <div class="card-bcard-score">90/90</div>
-        <div class="card-bars">
-           ars">
-            <div class="card <div class="card-bar">
-               -bar">
-                <span class="label <span class="label">Рифмы / Образы</span">Рифмы / Образы</span>
-                <>
-                <div class="track"><div class="fill" id="card-rhymes" stylediv class="track"><div class="fill"="width: 50%;"></div id="card-rhymes" style="width: 50%;"></div></div>
-></div>
-                <span class="value" id="                <span class="value" id="card-rhymes-val">5</card-rhymes-val">5</span>
-            </div>
-            <div class="cardspan>
-            </div>
-            <div class-bar">
-                <span class="label="card-bar">
-                <span class="label">Структура / Ритмика</span">Структура / Ритмика</span>
-                <div class="track>
-                <div class="track"><div class="fill" id="card-structure"><div class="fill" id="card" style="width: 50%;"></-structure" style="width: div></div>
-                <span class="value" id="50%;"></div></div>
-                <span class="card-structure-val">5</spanvalue" id="card-structure-val">5</span>
-            </div>
-           >
-            </div>
-            <div class="card-bar <div class="card-bar">
-                <span">
-                <span class="label"> class="label">Реализация стиРеализация стиля</span>
-                <div classля</span>
-                <div class="="track"><div class="fill" id="card-styletrack"><div class="fill" id="card-style" style="width: 50%;" style="width"></div></div>
-                <span: 50%;"></div></div class="value" id="card-style-val">5</>
-                <span class="value" id="card-stylespan>
-            </div>
-           -val">5</span>
-            </div>
-            <div class="card-bar">
-                <div class="card-bar">
-                <span class="label <span class="label">Индивидуальность / Ха">Индивидуальность / Хариризма</span>
-                <зма</span>
-                <div class="track"><div class="fill" id="card-div class="track"><div class="fill"charisma" style="width:  id="card-charisma" style50%;"></div></div>
-                <span class="="width: 50%;value" id="card-charisma"></div></div>
-                <span class="value" id="card-charisma-val">5</-val">5</span>
-            </div>
-           span>
-            </div>
-            < <div class="card-bar">
-               div class="card-bar">
-                <span class="label <span class="label">Атмосфера / Вай">Атмосфера / Вайб</span>
-                <div class="track"><divб</span>
-                <div class="track">< class="fill vibe-fill" iddiv class="fill vibe-fill" id="card-vibe" style="width="card-vibe" style="width: 10%;: 10%;"></div></div>
-               "></div></div>
-                <span class="value" id="card-vibe-val">1 <span class="value" id="card-v</span>
-            </div>
-       ibe-val">1</span>
-            </div>
-        <div class="card-footer"> </div>
-        </div>
-        <div classОценка по системе <span>Р="card-footer">Оценка по системеЗТ</span> • raitfroso</ <span>РЗТ</span> • raitfroso</div>
-    </div>
-    </div>
-
-   div>
 
     <script>
-        const <script>
-        const tg = window.Telegram.WebApp tg = window.Telegram.WebApp;
-       ;
-        tg. tg.ready();
+        const tg = window.Telegram.WebApp;
+        tg.ready();
         tg.expand();
 
-        const vibeMultipliers = [1.0000, 1.0675, ready();
-        tg.expand();
-
-        const vibeMultipliers = [11.0000, 1.0675, 1.1349, 1.202.1349, 1.2024, 1.2699,4, 1.2699, 1.3373, 1.4048, 1.3373, 1.4048 1.4723, 1, 1.4723, 1.5397, 1.6072];
-        let.5397, 1.607 currentRelease = null;
-        let search2];
+        const vibeMultipliers = [1.0000, 1.0675, 1.1349, 1.2024, 1.2699, 1.3373, 1.4048, 1.4723, 1.5397, 1.6072];
         let currentRelease = null;
         let searchMode = 'album';
         let historyData = [];
 
-       Mode = 'album';
-        let historyData = [];
-
-        // CloudStorage обёр // CloudStorage обёртки
-       тки
+        // CloudStorage обёртки
         function cloudGet(key) {
-            return function cloudGet(key) {
             return new Promise((resolve) => {
-                tg.CloudStorage new Promise((resolve) => {
-               .getItem(key, (err, value) => {
-                    if tg.CloudStorage.getItem(key, ( (err) resolve(null);
-                    elseerr, value) => {
-                    if (err) resolve resolve(value);
-                });
-            });
-        }
-        function cloud(null);
+                tg.CloudStorage.getItem(key, (err, value) => {
+                    if (err) resolve(null);
                     else resolve(value);
-               Set(key, value) {
-            return });
+                });
             });
         }
         function cloudSet(key, value) {
             return new Promise((resolve) => {
-                tg.CloudStorage new Promise((resolve) => {
-                tg.CloudStorage.setItem(key, value, (err).setItem(key, value, (err => {
+                tg.CloudStorage.setItem(key, value, (err) => {
                     resolve(!err);
                 });
-           ) => {
-                    resolve(!err);
-                });
- });
+            });
         }
 
         async function loadHistory() {
-            const stored = await cloudGet('rzt            });
-        }
-
-        async function loadHistory_history');
-            if (stored)() {
-            const stored = await cloudGet('rzt {
-                try { historyData = JSON.parse(st_history');
+            const stored = await cloudGet('rzt_history');
             if (stored) {
-                try {ored); } catch(e) { historyData = historyData = JSON.parse(stored); } catch(e) { historyData = []; }
-            []; }
+                try { historyData = JSON.parse(stored); } catch(e) { historyData = []; }
             } else {
-                } else {
-                historyData = historyData = [];
-            }
-            renderCollection();
-        [];
+                historyData = [];
             }
             renderCollection();
         }
-        async }
         async function saveHistory() {
-            await cloudSet('rzt_history', function saveHistory() {
-            await cloudSet(' JSON.stringify(historyData));
+            await cloudSet('rzt_history', JSON.stringify(historyData));
         }
-       rzt_history', JSON.stringify(historyData));
         loadHistory();
 
         // Вкладки
-        document }
-        loadHistory();
-
-        // Вклад.querySelectorAll('.nav-btn').forEach(ки
-        document.querySelectorAll('.nav-btn').forEachbtn => {
-            btn.addEventListener('click(btn => {
+        document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll', () => {
-                document.querySelectorAll('.nav('.nav-btn').forEach(b => b.classList.remove('active-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 btn.classList.add('active');
-                document.getElementByIdactive'));
-                btn.classList.add('active');
-                document.getElementById('tab-' + btn.dataset.tab).classList('tab-' + btn.dataset.tab).class.add('active');
-                if (btnList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
                 if (btn.dataset.tab === 'collection') renderCollection();
             });
         });
 
-        // Переключатель.dataset.tab === 'collection') режимов
-        document.getElementById('mode renderCollection();
-            });
-        });
-
-        // Переключатель-album').addEventListener(' режимов
-        document.getElementById('modeclick', function() {
-            searchMode = '-album').addEventListener('click', function()album';
-            document.getElementById('mode-album {
+        // Переключатель режимов
+        document.getElementById('mode-album').addEventListener('click', function() {
             searchMode = 'album';
-            document.getElementById('mode-album').classList.add').classList.add('active');
-           ('active');
-            document.getElementById('mode document.getElementById('mode-track').classList.remove('active');
+            document.getElementById('mode-album').classList.add('active');
+            document.getElementById('mode-track').classList.remove('active');
             clearSearch();
         });
-        document-track').classList.remove('active');
-            clearSearch.getElementById('mode-track').addEventListener('();
-        });
-        document.getElementById('mode-trackclick', function() {
-            searchMode = '').addEventListener('click', function() {
-            searchModetrack';
-            document.getElementById('mode-track').class = 'track';
-            document.getElementById('List.add('active');
-            document.getElementByIdmode-track').classList.add('active');
-            document.getElementById('mode-album').classList.remove('('mode-album').classList.remove('active');
-            clearSearch();
-        });
-
-        functionactive');
+        document.getElementById('mode-track').addEventListener('click', function() {
+            searchMode = 'track';
+            document.getElementById('mode-track').classList.add('active');
+            document.getElementById('mode-album').classList.remove('active');
             clearSearch();
         });
 
         function clearSearch() {
-            document.getElementById(' clearSearch() {
             document.getElementById('search-input').value = '';
-            document.getElementById('searchsearch-input').value = '';
-            document.getElementById('search-res-results').style.display =ults').style.display = 'none 'none';
-            document.getElementById('selected-release').style';
-            document.getElementById('selected-release').style.display = 'none.display = 'none';
-            currentRelease = null;
-           ';
+            document.getElementById('search-results').style.display = 'none';
+            document.getElementById('selected-release').style.display = 'none';
             currentRelease = null;
             document.getElementById('manual-add').style.display = 'none';
-            document.getElementById(' document.getElementById('manual-add').style.display = 'nonemanual-form').style.display = 'none';
-        }
-
-       ';
             document.getElementById('manual-form').style.display = 'none';
         }
 
-        // Поиск // Поиск Deezer (JSON Deezer (JSONP)
-        constP)
-        const searchInput = document searchInput = document.getElementById('search-input');
-        const search.getElementById('search-input');
-        const searchResults = document.getElementByIdResults = document.getElementById('search-results('search-results');
-        let search');
+        // Поиск Deezer (JSONP)
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
         let searchTimeout = null;
-       Timeout = null;
         const manualAdd = document.getElementById('manual-add');
-        const manualForm const manualAdd = document.getElementById('manual-add');
-        = document.getElementById('manual-form');
-
-        search const manualForm = document.getElementById('manualInput.addEventListener('input', () =>-form');
+        const manualForm = document.getElementById('manual-form');
 
         searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
-            const query {
-            clearTimeout(searchTimeout);
             const query = searchInput.value.trim();
-            document.getElementById('selected = searchInput.value.trim();
-            document.getElementById('selected-release').style.display = 'none-release').style.display = 'none';
-            currentRelease = null;
-            manualAdd.style.display =';
+            document.getElementById('selected-release').style.display = 'none';
             currentRelease = null;
             manualAdd.style.display = 'none';
-            manualForm.style.display 'none';
             manualForm.style.display = 'none';
 
-            if (query.length = 'none';
-
-            if (query.length < < 2) {
-                searchResults.style.display = 2) {
+            if (query.length < 2) {
                 searchResults.style.display = 'none';
-                return;
-            'none';
                 return;
             }
 
-            searchResults.innerHTML }
-
-            searchResults.innerHTML = '<div class="search = '<div class="search-msg-msg">Ищем...</div>';
-            search">Ищем...</div>';
-            searchResults.style.display =Results.style.display = 'block';
+            searchResults.innerHTML = '<div class="search-msg">Ищем...</div>';
+            searchResults.style.display = 'block';
 
             searchTimeout = setTimeout(() => {
-                'block';
-
-            searchTimeout = setTimeout let safeQuery = query.toLowerCase()
-                    .replace(() => {
-                let safeQuery =(/\$/g, 's')
-                    . query.toLowerCase()
-                    .replace(/\$/g, 'replace(/ё/g, 'еs')
+                let safeQuery = query.toLowerCase()
+                    .replace(/\$/g, 's')
                     .replace(/ё/g, 'е')
-                    .replace(/')
-                    .replace(/[^a-z[^a-zа-я0-9а-я0-9\s]/gi, ' ')
-                    .replace(/\s+/\s]/gi, ' ')
-                    .replaceg, ' ')
-                    .trim(/\s+/g, '();
-                if (safeQuery.length ===  ')
+                    .replace(/[^a-zа-я0-9\s]/gi, ' ')
+                    .replace(/\s+/g, ' ')
                     .trim();
                 if (safeQuery.length === 0) safeQuery = query;
-                if (searchMode0) safeQuery = query;
-                === 'album') {
-                    searchD if (searchMode === 'album') {
-                    searchDeezerAlbums(safeQueryeezerAlbums(safeQuery);
-                } else);
+                if (searchMode === 'album') {
+                    searchDeezerAlbums(safeQuery);
                 } else {
-                    searchDeezerTracks(s {
                     searchDeezerTracks(safeQuery);
                 }
-            }, 500afeQuery);
-                }
-            }, );
-        });
-
-        function searchDeezerAlbums500);
+            }, 500);
         });
 
         function searchDeezerAlbums(query) {
-            const term = encode(query) {
             const term = encodeURIComponent(query);
-            const script = document.createElementURIComponent(query);
-            const script = document.createElement('script('script');
-            const callbackName = 'json');
-            const callbackName = 'jsonp_callback_' + Date.now();
-            windowp_callback_' + Date.now[callbackName] = function(data) {
-               ();
-            window[callbackName] = function(data) {
-                delete window[callbackName];
-                document delete window[callbackName];
-                document.body.removeChild(.body.removeChild(script);
-                if (script);
-                if (data && datadata && data.data) {
-                    showAlbumResults(data.data) {
-                    showAlbumResults(data.data);
-                }.data);
-                } else {
-                    show else {
-                    showAlbumResults([]AlbumResults([]);
-                }
-           );
-                }
-            };
-            script };
-            script.src.src = `https://api.deezer.com/search = `https://api.deezer.com/search/album?q=${term}&limit=25&output=jsonp&callback=${callbackName}`;
-           /album?q=${term}&limit=25&output=jsonp&callback=${callbackName}`;
-            document.body.appendChild( document.body.appendChild(script);
-       script);
-        }
-
-        function searchD }
-
-        function searchDeezerTracks(query) {
-           eezerTracks(query) {
-            const term const term = encodeURIComponent(query = encodeURIComponent(query);
-            const script =);
             const script = document.createElement('script');
-            const callback document.createElement('script');
-            const callbackName = 'jsonp_callback_' + DateName = 'jsonp_callback_' + Date.now.now();
-            window[callbackName] = function();
+            const callbackName = 'jsonp_callback_' + Date.now();
             window[callbackName] = function(data) {
-                delete window[(data) {
                 delete window[callbackName];
-                documentcallbackName];
                 document.body.removeChild(script);
-.body.removeChild(script);
-                if                if (data && data.data) {
-                    (data && data.data) {
-                    showTrackResults(data.data);
+                if (data && data.data) {
+                    showAlbumResults(data.data);
                 } else {
-                    show showTrackResults(data.data);
-                } else {
-                    showTrackResults([]);
-TrackResults([]);
+                    showAlbumResults([]);
                 }
             };
-            script.src =                }
-            };
-            script.src = `https://api `https://api.deezer.com.deezer.com/search?q=${/search?q=${term}&limit=25&outputterm}&limit=25&output=jsonp&callback=${callbackName}`=jsonp&callback=${callbackName}`;
-            document.body;
+            script.src = `https://api.deezer.com/search/album?q=${term}&limit=25&output=jsonp&callback=${callbackName}`;
             document.body.appendChild(script);
         }
 
-       .appendChild(script);
+        function searchDeezerTracks(query) {
+            const term = encodeURIComponent(query);
+            const script = document.createElement('script');
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                if (data && data.data) {
+                    showTrackResults(data.data);
+                } else {
+                    showTrackResults([]);
+                }
+            };
+            script.src = `https://api.deezer.com/search?q=${term}&limit=25&output=jsonp&callback=${callbackName}`;
+            document.body.appendChild(script);
         }
 
-        function function showAlbumResults(results) {
-            search showAlbumResults(results) {
-            searchResults.innerHTMLResults.innerHTML = '';
-            manualAdd.style.display = 'none = '';
+        function showAlbumResults(results) {
+            searchResults.innerHTML = '';
             manualAdd.style.display = 'none';
-            if (!results || results.length';
             if (!results || results.length === 0) {
                 searchResults.innerHTML = `
-                    === 0) {
-                searchResults.innerHTML = `
-                    <div class="search-msg <div class="search-msg" style="color: var(--red-accent);">Ни" style="color: var(--red-acчего не найденоcent);">Ничего не найдено</div>
-                    <div class="search-msg" style="font</div>
-                    <div class="search-msg" style="font-size: 0.-size: 0.8rem;">П8rem;">Попробуйте вопробуйте ввести другое название иливести другое название или добавьте вручную</div>
-                ` добавьте вручную</div>
+                    <div class="search-msg" style="color: var(--red-accent);">Ничего не найдено</div>
+                    <div class="search-msg" style="font-size: 0.8rem;">Попробуйте ввести другое название или добавьте вручную</div>
                 `;
-                manualAdd;
-                manualAdd.style.display = '.style.display = 'block';
-                return;
-block';
+                manualAdd.style.display = 'block';
                 return;
             }
             const items = results.map(album => ({
-                title:            }
-            const items = results.map(album => album.title,
-                artist: album.artist.name ({
                 title: album.title,
-               ,
-                image: album.cover_medium || artist: album.artist.name,
-                image: album.cover_medium || 'https 'https://via.placeholder.com/://via.placeholder.com/60',
-                high60',
-                highResImage: album.cover_bigResImage: album.cover_big || album || album.cover_medium ||.cover_medium || '',
-                type: ' '',
+                artist: album.artist.name,
+                image: album.cover_medium || 'https://via.placeholder.com/60',
+                highResImage: album.cover_big || album.cover_medium || '',
                 type: 'Альбом',
-                releaseDate: album.release_date ? new DateАльбом',
-                releaseDate: album.release_date ? new Date(album(album.release_date).toLocaleDateString('ru.release_date).toLocaleDateString('ru-RU', { year: 'numeric-RU', { year: 'numeric', month: 'long', day: 'numeric'', month: 'long', day: 'numeric }) : 'Дата не указана' }) : 'Дата не указана',
+                releaseDate: album.release_date ? new Date(album.release_date).toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Дата не указана',
                 trackCount: album.nb_tracks || '?',
-                trackCount: album.nb_t',
-                extra: `${album.nracks || '?',
-                extra: `${album.nb_tracks || '?'}b_tracks || '?'} треков • ${album.release_date ? new Date(album треков • ${album.release_date ? new.release_date).getFullYear() : ''} Date(album.release_date).getFullYear()`
+                extra: `${album.nb_tracks || '?'} треков • ${album.release_date ? new Date(album.release_date).getFullYear() : ''}`
             }));
-            renderSearchItems(items : ''}`
-            }));
-            render);
-        }
-
-        functionSearchItems(items);
+            renderSearchItems(items);
         }
 
         function showTrackResults(results) {
-            searchResults.innerHTML = showTrackResults(results) {
-            '';
-            manualAdd.style.display = ' searchResults.innerHTML = '';
+            searchResults.innerHTML = '';
             manualAdd.style.display = 'none';
-            if (!none';
-            if (!results || results.length === 0results || results.length === 0) {
-               ) {
-                searchResults.innerHTML = searchResults.innerHTML = `
-                    <div class="search-msg `
-                    <div class="search" style="color: var(--red-accent);">-msg" style="color: var(--red-accent);">Ничего не найдено</div>
-                   Ничего не найдено</div <div class="search-msg>
-                    <div class="search-msg" style="font-size: 0.8rem;">" style="font-size: 0.8rem;">Попробуйте ввести другое название или добавПопробуйте ввести друьте вручную</div>
-               гое название или добавьте вручную `;
-                manualAdd.style.display = 'block</div>
+            if (!results || results.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="search-msg" style="color: var(--red-accent);">Ничего не найдено</div>
+                    <div class="search-msg" style="font-size: 0.8rem;">Попробуйте ввести другое название или добавьте вручную</div>
                 `;
-                manualAdd';
+                manualAdd.style.display = 'block';
                 return;
             }
-            const items =.style.display = 'block';
-                results.map(track => {
-                const dur = return;
-            }
             const items = results.map(track => {
-                const dur = track.duration || track.duration || 0;
-                const minutes 0;
-                const minutes = Math.floor(d = Math.floor(dur / 60ur / 60);
-                const seconds);
-                const seconds = String(dur % 60).padStart(2, '0 = String(dur % 60).padStart(');
+                const dur = track.duration || 0;
+                const minutes = Math.floor(dur / 60);
+                const seconds = String(dur % 60).padStart(2, '0');
                 return {
                     title: track.title,
-                    artist:2, '0');
-                return {
-                    track.artist.name,
-                    image: title: track.title,
                     artist: track.artist.name,
-                    image: track track.album.cover_medium || 'https://via.album.cover_medium || 'https://via.placeholder.com/60',
-                    high.placeholder.com/60',
-                    highResImage: track.album.cover_big ||ResImage: track.album.cover track.album.cover_medium ||_big || track.album.cover_medium || '',
+                    image: track.album.cover_medium || 'https://via.placeholder.com/60',
+                    highResImage: track.album.cover_big || track.album.cover_medium || '',
                     type: 'Трек',
-                    albumName: track '',
-                    type: 'Трек',
-                   .album.title,
-                    duration: `${ albumName: track.album.title,
+                    albumName: track.album.title,
                     duration: `${minutes}:${seconds}`,
-                    extraminutes}:${seconds}`,
-                    extra: `${track.: `${track.album.title} •album.title} • ${minutes}: ${minutes}:${seconds}`
-${seconds}`
+                    extra: `${track.album.title} • ${minutes}:${seconds}`
                 };
             });
-            renderSearchItems                };
-            });
             renderSearchItems(items);
-       (items);
         }
 
         function renderSearchItems(items) {
-            const seen = new Set }
-
-        function renderSearchItems(items)();
-            const unique = [];
-            items.forEach(item {
             const seen = new Set();
-            const => {
-                const key = `${item.title}|${ unique = [];
+            const unique = [];
             items.forEach(item => {
-                constitem.artist}`;
-                if (!seen key = `${item.title}|${item.artist}`;
-                if (!seen.has.has(key)) {
-                    seen.add(key);
-                    unique.push(key)) {
+                const key = `${item.title}|${item.artist}`;
+                if (!seen.has(key)) {
                     seen.add(key);
                     unique.push(item);
                 }
             });
-            const(item);
-                }
-            });
             const limited = unique.slice(0, 20);
-            limited = unique.slice(0, 20);
             limited.forEach(data => {
-                const div limited.forEach(data => {
                 const div = document.createElement('div');
-                div = document.createElement('div');
-                div.className = '.className = 'search-item';
-                div.innerHTMLsearch-item';
+                div.className = 'search-item';
                 div.innerHTML = `
-                    <img src="${data.image}" alt="cover = `
-                    <img src="${data.image}"">
-                    <div class="search-item-info alt="cover">
-                    <div class">
-                        <div class="search-item-title">${data="search-item-info">
-                        <div class="search.title}</div>
-                        <div class-item-title">${data.title}</div>
-                        <div class="search-item-art="search-item-artist">${dataist">${data.artist} • ${data..artist} • ${data.extra}</div>
-                   extra}</div>
+                    <img src="${data.image}" alt="cover">
+                    <div class="search-item-info">
+                        <div class="search-item-title">${data.title}</div>
+                        <div class="search-item-artist">${data.artist} • ${data.extra}</div>
                     </div>
-                </div>
                 `;
-                div `;
-                div.addEventListener('click',.addEventListener('click', () => {
+                div.addEventListener('click', () => {
                     searchResults.style.display = 'none';
-                    searchInput.value () => {
-                    searchResults.style.display = ' = '';
-                    searchInput.blurnone';
                     searchInput.value = '';
-                    search();
+                    searchInput.blur();
                     manualAdd.style.display = 'none';
-                    manualFormInput.blur();
-                    manualAdd.style.display = 'none';
-                    manualForm.style.display.style.display = 'none';
-
-                    current = 'none';
+                    manualForm.style.display = 'none';
 
                     currentRelease = {
                         title: data.title,
-                        artist:Release = {
-                        title: data.title,
                         artist: data.artist,
-                        image: data data.artist,
-                        image: data.highResImage.highResImage,
+                        image: data.highResImage,
                         type: data.type,
-                        releaseDate: data.releaseDate ||,
-                        type: data.type,
-                        null,
-                        trackCount: data.t releaseDate: data.releaseDate || null,
-                        trackCount: data.trackCount || nullrackCount || null,
-                        albumName: data.album,
+                        releaseDate: data.releaseDate || null,
+                        trackCount: data.trackCount || null,
                         albumName: data.albumName || null,
-                        duration: dataName || null,
-                        duration: data.d.duration || null
+                        duration: data.duration || null
                     };
 
-                    document.getElementById('releaseuration || null
-                    };
-
-                    document.getElementById('release-img').src = currentRelease.image-img').src = currentRelease.image;
-                    document.getElementById('release-title').textContent = currentRelease;
-                    document.getElementById('release-title').textContent.title;
-                    document.getElementById('release-art = currentRelease.title;
-                    document.getElementByIdist').textContent = currentRelease.artist;
-                    document('release-artist').textContent = currentRelease..getElementById('release-type').textContent =artist;
+                    document.getElementById('release-img').src = currentRelease.image;
+                    document.getElementById('release-title').textContent = currentRelease.title;
+                    document.getElementById('release-artist').textContent = currentRelease.artist;
                     document.getElementById('release-type').textContent = currentRelease.type;
 
-                    let extraText currentRelease.type;
-
                     let extraText = '';
-                    if = '';
-                    if (currentRelease.type (currentRelease.type === 'А === 'Альбом') {
-                        extraльбом') {
-                        extraText = `${currentRelease.releaseDate || '—'} •Text = `${currentRelease.releaseDate || '—'} • ${currentRelease.trackCount || '?'} тре ${currentRelease.trackCount || 'ков`;
+                    if (currentRelease.type === 'Альбом') {
+                        extraText = `${currentRelease.releaseDate || '—'} • ${currentRelease.trackCount || '?'} треков`;
                     } else {
-                        extra?'} треков`;
-                    } else {
-                        extraText = `${currentText = `${currentRelease.albumName || '—'}Release.albumName || '—'} • ${current • ${currentRelease.duration || 'Release.duration || '—'}`—'}`;
+                        extraText = `${currentRelease.albumName || '—'} • ${currentRelease.duration || '—'}`;
                     }
-                    document.getElementById('release-;
-                    }
-                    document.getElementById('release-extra').textContent = extraTextextra').textContent = extraText;
-                   ;
-                    document.getElementById('selected-release').style.display = 'flex document.getElementById('selected-release').style.display = 'flex';
-                });
-                searchResults.appendChild(';
+                    document.getElementById('release-extra').textContent = extraText;
+                    document.getElementById('selected-release').style.display = 'flex';
                 });
                 searchResults.appendChild(div);
-            });
-            searchResults.stylediv);
             });
             searchResults.style.display = 'block';
         }
 
-        document.addEventListener.display = 'block';
-        }
-
-        document.addEventListener('click('click', (e)', (e) => {
-            if (!e.target.cl => {
-            if (!e.target.closest('.search-container')) searchResults.style.display = 'osest('.search-container')) searchResults.stylenone';
-        });
-
-        // Ручное.display = 'none';
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) searchResults.style.display = 'none';
         });
 
         // Ручное добавление
-        добавление
-        document.getElementById('manual document.getElementById('manual-btn').addEventListener('click', ()-btn').addEventListener('click', () => {
-            manual => {
-            manualForm.style.display =Form.style.display = 'block';
-            'block';
-            manualAdd.style.display = 'none manualAdd.style.display = 'none';
-            searchResults.style';
+        document.getElementById('manual-btn').addEventListener('click', () => {
+            manualForm.style.display = 'block';
+            manualAdd.style.display = 'none';
             searchResults.style.display = 'none';
-            toggleManualFields(document.getElementById('.display = 'none';
-            toggleManualmanual-type').value);
+            toggleManualFields(document.getElementById('manual-type').value);
         });
 
-        document.getElementByIdFields(document.getElementById('manual-type').value);
+        document.getElementById('manual-type').addEventListener('change', function() {
+            toggleManualFields(this.value);
         });
 
-        document.getElementById('manual-type').addEventListener('manual-type').addEventListener('change', function('change', function() {
-            toggle() {
-            toggleManualFields(this.valueManualFields(this.value);
-        });
-
-        function toggleManualFields);
-        });
-
-        function toggleManualFields(type)(type) {
-            const albumFields = {
-            const albumFields = document.getElementById('manual document.getElementById('manual-album-fields');
-            const-album-fields');
-            const trackFields = document.getElementById('manual-track trackFields = document.getElementById('manual-track-fields');
-            if (type === 'Трек')-fields');
-            if (type === 'Т {
-                albumFields.style.display = 'рек') {
+        function toggleManualFields(type) {
+            const albumFields = document.getElementById('manual-album-fields');
+            const trackFields = document.getElementById('manual-track-fields');
+            if (type === 'Трек') {
                 albumFields.style.display = 'none';
                 trackFields.style.display = 'block';
-none';
-                trackFields.style.display =            } else {
-                albumFields.style.display 'block';
             } else {
-                albumFields.style.display = 'block = 'block';
-';
+                albumFields.style.display = 'block';
                 trackFields.style.display = 'none';
             }
         }
 
-        document.getElementById                trackFields.style.display = 'none';
-            }
-        }
-
-        document.getElementById('manual-cancel').addEventListener('('manual-cancel').addEventListener('click', () => {
-            manualForm.styleclick', () => {
-            manualForm.style.display = '.display = 'none';
+        document.getElementById('manual-cancel').addEventListener('click', () => {
+            manualForm.style.display = 'none';
         });
 
-        document.getElementById('none';
-        });
-
-        document.getElementById('manual-confirm').addEventListener('clickmanual-confirm').addEventListener('click', ()', () => {
-            const title = document.getElementById => {
-            const title = document.getElementById('manual('manual-title').value.trim();
-            const-title').value.trim();
-            const artist artist = document.getElementById('manual-artist'). = document.getElementById('manual-artist').value.trim();
-value.trim();
-            if (!title ||            if (!title || !artist) !artist) {
+        document.getElementById('manual-confirm').addEventListener('click', () => {
+            const title = document.getElementById('manual-title').value.trim();
+            const artist = document.getElementById('manual-artist').value.trim();
+            if (!title || !artist) {
                 tg.showAlert('Заполните название и исполнителя!');
-                return {
-                tg.showAlert('Заполните название и исполнителя;
-            }
-            const type = document.getElementById!');
                 return;
             }
-            const type =('manual-type').value;
-            const image = document document.getElementById('manual-type').value;
-            const image = document.getElementById('manual-image').value.trim().getElementById('manual-image').value.trim() || || 'https://via.placeholder.com 'https://via.placeholder.com/300';
+            const type = document.getElementById('manual-type').value;
+            const image = document.getElementById('manual-image').value.trim() || 'https://via.placeholder.com/300';
 
-           /300';
-
-            let releaseDate = null, trackCount let releaseDate = null, trackCount = null, albumName = null, = null, albumName = null, duration = null;
-
-            if (type duration = null;
+            let releaseDate = null, trackCount = null, albumName = null, duration = null;
 
             if (type === 'Трек') {
-                albumName = document === 'Трек') {
-                albumName = document.getElementById.getElementById('manual-album-name').value('manual-album-name').value.trim() || '—';
-                duration.trim() || '—';
+                albumName = document.getElementById('manual-album-name').value.trim() || '—';
                 duration = document.getElementById('manual-duration').value.trim() || '—';
             } else {
-                = document.getElementById('manual-duration').value.trim() || const dateVal = document.getElementById('manual '—';
-            } else {
-                const dateVal = document.getElementById('manual-date').-date').value;
-                if (dateValvalue;
+                const dateVal = document.getElementById('manual-date').value;
                 if (dateVal) {
-                   ) {
-                    const d = new Date(dateVal const d = new Date(dateVal);
-                    if (!isNaN(d)) release);
-                    if (!isNaN(d)) releaseDate = d.toDate = d.toLocaleDateString('ru-RULocaleDateString('ru-RU',', { year: 'numeric', month: { year: 'numeric', month: 'long', day 'long', day: 'numeric': 'numeric' });
+                    const d = new Date(dateVal);
+                    if (!isNaN(d)) releaseDate = d.toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' });
                 }
-                trackCount });
-                }
-                trackCount = document.getElementById('manual-tracks').value || '? = document.getElementById('manual-tracks').value ||';
+                trackCount = document.getElementById('manual-tracks').value || '?';
             }
 
-            currentRelease = '?';
-            }
-
-            {
+            currentRelease = {
                 title, artist, image, type,
-                releaseDate, track currentRelease = {
-                title, artist, image, type,
-                releaseDate, trackCount, albumNameCount, albumName, duration
-           , duration
+                releaseDate, trackCount, albumName, duration
             };
 
-            document.getElementById('release-img'). };
-
-            document.getElementById('release-img').src =src = currentRelease.image;
-            document currentRelease.image;
-            document.getElementById('release-title.getElementById('release-title').textContent =').textContent = currentRelease.title;
-            document.getElementById('release-artist').textContent currentRelease.title;
-            document.getElementById('release-artist'). = currentRelease.artist;
-            document.getElementById('textContent = currentRelease.artistrelease-type').text;
+            document.getElementById('release-img').src = currentRelease.image;
+            document.getElementById('release-title').textContent = currentRelease.title;
+            document.getElementById('release-artist').textContent = currentRelease.artist;
             document.getElementById('release-type').textContent = currentRelease.type;
 
-            let extraText =Content = currentRelease.type;
-
             let extraText = '';
-            if (currentRelease.type === 'Трек') '';
             if (currentRelease.type === 'Трек') {
-                extraText = `${currentRelease. {
-                extraText = `${currentRelease.albumName || '—'} • ${currentReleasealbumName || '—'} • ${current.duration || '—'}`;
-           Release.duration || '—'}`;
+                extraText = `${currentRelease.albumName || '—'} • ${currentRelease.duration || '—'}`;
             } else {
-                extraText = `${ } else {
-                extraText = `${currentRelease.releasecurrentRelease.releaseDate || '—'} • ${currentDate || '—'} • ${currentRelease.tRelease.trackCount || '?'rackCount} треков`;
+                extraText = `${currentRelease.releaseDate || '—'} • ${currentRelease.trackCount || '?'} треков`;
             }
-            document || '?'} треков`;
-            }
-            document.getElementById('release-extra').text.getElementById('release-extra').textContent = extraText;
-            document.getElementByIdContent = extraText;
+            document.getElementById('release-extra').textContent = extraText;
             document.getElementById('selected-release').style.display = 'flex';
-            manualForm.style('selected-release').style.display = 'flex';
-           .display = 'none';
-            searchInput.value = manualForm.style.display = 'none';
+            manualForm.style.display = 'none';
             searchInput.value = '';
-            tg.showAlert('Р '';
-            tg.showAlert('Релиз добавленелиз добавлен! Теперь можно! Теперь можно оценивать.');
-        оценивать.');
+            tg.showAlert('Релиз добавлен! Теперь можно оценивать.');
         });
 
-        // --- Расчёт бал });
-
-        // --- Расчёт баллов (основнойлов (основной) ---
-       ) ---
-        const inputs = { const inputs = { rhymes: document.getElementById('rhymes'), rhymes: document.getElementById('rhymes'), structure structure: document.getElementById('structure'), style: document.getElementById('structure'), style: document.getElementById('style'), charisma: document.getElementById(': document.getElementById('style'), charisma: document.getElementById('charisma'), vibe: document.getElementById('vcharisma'), vibe: document.getElementById('vibe') };
-        const displays =ibe') };
-        const displays = { rhymes: { rhymes: document.getElementById('rhymes document.getElementById('rhymes-val'), structure: document.getElementById('structure-val'), style:-val'), structure: document.getElementById('structure-val'), style: document document.getElementById('style-val'), charisma: document.getElementById('.getElementById('style-val'), charisma: document.getElementById('charisma-val'), vibe: document.getElementByIdcharisma-val'), vibe: document.getElementById('vibe-val'), total: document.getElementById('total('vibe-val'), total: document.getElementById('total-score-score') };
-        const scoreDisplay = document') };
+        // --- Расчёт баллов (основной) ---
+        const inputs = { rhymes: document.getElementById('rhymes'), structure: document.getElementById('structure'), style: document.getElementById('style'), charisma: document.getElementById('charisma'), vibe: document.getElementById('vibe') };
+        const displays = { rhymes: document.getElementById('rhymes-val'), structure: document.getElementById('structure-val'), style: document.getElementById('style-val'), charisma: document.getElementById('charisma-val'), vibe: document.getElementById('vibe-val'), total: document.getElementById('total-score') };
         const scoreDisplay = document.getElementById('score-display');
 
-        function.getElementById('score-display');
-
-        function updateScoreColor updateScoreColor(score) {
-           (score) {
+        function updateScoreColor(score) {
             if (score === 90) {
-                scoreDisplay.classList.add('gold if (score === 90) {
-                scoreDisplay');
-            } else {
                 scoreDisplay.classList.add('gold');
             } else {
                 scoreDisplay.classList.remove('gold');
             }
-       .classList.remove('gold');
-            }
         }
-
- }
 
         function calculate() {
-            let        function calculate() {
-            let baseSum = parseInt baseSum = parseInt(inputs.rh(inputs.rhymes.value) +ymes.value) + parseInt(inputs.structure.value) + parseInt(inputs.structure.value) + parseInt(inputs.style parseInt(inputs.style.value) + parseInt.value) + parseInt(inputs.charisma(inputs.charisma.value);
-            let score =.value);
-            let score = Math.round Math.round((baseSum * 1.4) * vibeMultipliers((baseSum * 1.4) * vibeMultipliers[parseInt(inputs[parseInt(inputs.vibe.value) -.vibe.value) - 1]);
-            displays.total.text 1]);
-            displays.total.textContent = scoreContent = score;
-            updateScoreColor;
+            let baseSum = parseInt(inputs.rhymes.value) + parseInt(inputs.structure.value) + parseInt(inputs.style.value) + parseInt(inputs.charisma.value);
+            let score = Math.round((baseSum * 1.4) * vibeMultipliers[parseInt(inputs.vibe.value) - 1]);
+            displays.total.textContent = score;
             updateScoreColor(score);
 
-           (score);
-
-            Object.keys(inputs).forEach(key => Object.keys(inputs).forEach(key => {
- {
-                displays[key].textContent =                displays[key].textContent = inputs[key].value inputs[key].value;
-                const percent = ((inputs[key;
-                const percent = ((inputs[key].value - 1) / 9)].value - 1) / 9) * 100;
-                inputs * 100;
-                inputs[key].style.[key].style.background = `linear-gradient(to right,background = `linear-gradient(to right, ${key === ' ${key === 'vvibe' ? 'var(--purple-accent)' : 'var(--blue-accent)'ibe' ? 'var(--purple-accent)' : 'var} ${percent}%, #2d(--blue-accent)'} ${percent}2e33 ${percent}%)`;
-            });
-%, #2d2e33 ${        }
-        Object.values(inputs).forEach(inputpercent}%)`;
+            Object.keys(inputs).forEach(key => {
+                displays[key].textContent = inputs[key].value;
+                const percent = ((inputs[key].value - 1) / 9) * 100;
+                inputs[key].style.background = `linear-gradient(to right, ${key === 'vibe' ? 'var(--purple-accent)' : 'var(--blue-accent)'} ${percent}%, #2d2e33 ${percent}%)`;
             });
         }
-        Object => input.addEventListener('input', calculate.values(inputs).forEach(input => input.addEventListener('input', calculate));
+        Object.values(inputs).forEach(input => input.addEventListener('input', calculate));
         calculate();
 
-       ));
-        calculate();
-
-        // --- СОХРАНЕНИЕ // --- СОХРАНЕНИЕ Н НОВОЙ ОЦЕНКИ ---
-       ОВОЙ ОЦЕНКИ ---
-        document.getElementById('save-btn').addEventListener('click', async document.getElementById('save-btn').addEventListener () => {
-            if (!currentRelease('click', async () => {
-            if) return tg.showAlert("Сначала найдите или добав (!currentRelease) return tg.showAlert("Сначала найдите или добавьте релизьте релиз!");
-            
-            const new!");
+        // --- СОХРАНЕНИЕ НОВОЙ ОЦЕНКИ ---
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            if (!currentRelease) return tg.showAlert("Сначала найдите или добавьте релиз!");
             
             const newItem = {
-               Item = {
                 id: Date.now(),
-                title: id: Date.now(),
-                title: currentRelease.title currentRelease.title,
-                artist: current,
-                artist: currentRelease.artistRelease.artist,
+                title: currentRelease.title,
+                artist: currentRelease.artist,
                 type: currentRelease.type,
-                score: parseInt(displays.total.text,
-                type: currentRelease.type,
-               Content),
-                image: currentRelease.image || score: parseInt(displays.total.textContent),
- 'https://via.placeholder.com/40',
-                               image: currentRelease.image || 'https://via.placeholder.com/40',
-                sl sliders: {
-                    rhymes: parseInt(inputs.rhiders: {
+                score: parseInt(displays.total.textContent),
+                image: currentRelease.image || 'https://via.placeholder.com/40',
+                sliders: {
                     rhymes: parseInt(inputs.rhymes.value),
-                    structure: parseInt(inputymes.value),
                     structure: parseInt(inputs.structure.value),
-                    style: parseInt(inputs.styles.structure.value),
-                    style: parseInt(input.value),
-                    charisma: parseInt(inputs.style.value),
+                    style: parseInt(inputs.style.value),
                     charisma: parseInt(inputs.charisma.value),
-                    vibe:s.charisma.value),
-                    vibe: parseInt(inputs parseInt(inputs.vibe.value)
-                },
-                extraInfo.vibe.value)
+                    vibe: parseInt(inputs.vibe.value)
                 },
                 extraInfo: {
-                    releaseDate: current: {
-                    releaseDate: currentReleaseRelease.releaseDate ||.releaseDate || null,
-                    trackCount: currentRelease null,
-                    trackCount: currentRelease.trackCount ||.trackCount || null,
-                    album null,
-                    albumName: currentReleaseName: currentRelease.albumName || null,
-                   .albumName || null,
-                    duration: currentRelease.d duration: currentRelease.duration || nulluration || null
-                }
-           
+                    releaseDate: currentRelease.releaseDate || null,
+                    trackCount: currentRelease.trackCount || null,
+                    albumName: currentRelease.albumName || null,
+                    duration: currentRelease.duration || null
                 }
             };
             
-            historyData };
-            
             historyData.push(newItem);
             await saveHistory();
-            tg.showPopup({ title.push(newItem);
-            await saveHistory();
-            tg: 'Готово', message: 'О.showPopup({ title: 'Гценка сохранена в облако Telegramотово', message: 'Оценка сохранена в облако Telegram!', buttons:!', buttons: [{type: 'ok'}] [{type: 'ok'}] });
+            tg.showPopup({ title: 'Готово', message: 'Оценка сохранена в облако Telegram!', buttons: [{type: 'ok'}] });
         });
 
-        // --- КОЛ });
-        });
-
-        // --- КОЛЛЛЕКЦИЯ ---
-        const collectionSearchЕКЦИЯ ---
-        const collectionSearch = = document.getElementById('collection-search');
-        const collectionSort = document.getElementById('collection-search');
+        // --- КОЛЛЕКЦИЯ ---
+        const collectionSearch = document.getElementById('collection-search');
         const collectionSort = document.getElementById('collection-sort');
-        const document.getElementById('collection-sort');
         const collectionList = document.getElementById('collection-list');
 
-        function render collectionList = document.getElementById('collection-listCollection() {
-            const query = collection');
-
         function renderCollection() {
-            const query =Search.value.toLowerCase();
-            const sortMethod = collectionSort.value collectionSearch.value.toLowerCase();
-            const sortMethod;
-            let data = [...history = collectionSort.value;
+            const query = collectionSearch.value.toLowerCase();
+            const sortMethod = collectionSort.value;
             let data = [...historyData];
-            if (query) dataData];
-            if (query) data = data.filter(item = data.filter(item => item.title.toLowerCase => item.title.toLowerCase().includes(query)().includes(query) || item.artist || item.artist.toLowerCase().includes(query));
-            if (.toLowerCase().includes(query));
-            if (sortMethod === 'sortMethod === 'highest') data.sort((a, b) => parseInt(b.score) -highest') data.sort((a, b) => parseInt(b.score) - parseInt parseInt(a.score));
-            else if ((a.score));
-            else if (sortMethod === 'lowest') data.sort((a,sortMethod === 'lowest') data.sort((a, b) => parseInt(a.score) - b) => parseInt(a.score) - parseInt(b.score));
-            else data.sort parseInt(b.score));
-            else data.sort((a, b) => b.id - a.id((a, b) => b.id - a.id);
-
-            collectionList.innerHTML = '';
-            if);
+            if (query) data = data.filter(item => item.title.toLowerCase().includes(query) || item.artist.toLowerCase().includes(query));
+            if (sortMethod === 'highest') data.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+            else if (sortMethod === 'lowest') data.sort((a, b) => parseInt(a.score) - parseInt(b.score));
+            else data.sort((a, b) => b.id - a.id);
 
             collectionList.innerHTML = '';
             if (data.length === 0) {
-                collectionList.innerHTML = '<div class=" (data.length === 0)empty-text">Ничего не найдено</div {
                 collectionList.innerHTML = '<div class="empty-text">Ничего не найдено</div>';
                 return;
             }
-            data.forEach>';
-                return;
-            }
             data.forEach(item => {
-               (item => {
-                const div = document.createElement(' const div = document.createElement('divdiv');
-                div.className = 'history-item');
+                const div = document.createElement('div');
                 div.className = 'history-item';
-                const imgSrc = item.image';
-                const imgSrc = item.image || 'https:// || 'https://viavia..placeholderplaceholder.com/40';
+                const imgSrc = item.image || 'https://via.placeholder.com/40';
                 const scoreClass = item.score === 90 ? 'gold' : '';
                 div.innerHTML = `
-                    <.com/40';
-                const scoreClass = item.score === 90 ? 'gold' : '';
-img src="${imgSrc}" alt="cover">
-                    <                div.innerHTML = `
-                    <img src="${imgSrc}" alt="coverdiv class="history-item-info">
-                        <div">
+                    <img src="${imgSrc}" alt="cover">
                     <div class="history-item-info">
-                        <div class="history-item class="history-item-title">${item-title">${item.title} <span class="history-item.title} <span class="history-item-type">${-type">${item.type}</span></item.type}</span></div>
-                        <div class="history-item-artist">${div>
-                        <div class="history-item-artist">item.artist}</div>
+                        <div class="history-item-title">${item.title} <span class="history-item-type">${item.type}</span></div>
+                        <div class="history-item-artist">${item.artist}</div>
                     </div>
-                   ${item.artist}</div>
-                    <div class="history-item-right </div>
                     <div class="history-item-right">
-                        <div class="history-item-score ${">
-                        <div class="history-item-scorescoreClass}">${item.score}/90</div>
-                        <button class="delete-btn ${scoreClass}">${item.score}/90</div>
-                        <button class="delete-btn" onclick="deleteItem(${item.id})" onclick="deleteItem(${item.id})">×">×</button>
-                    </div>
-               </button>
+                        <div class="history-item-score ${scoreClass}">${item.score}/90</div>
+                        <button class="delete-btn" onclick="deleteItem(${item.id})">×</button>
                     </div>
                 `;
-                div.addEventListener('click', `;
-                div.addEventListener('click', (e) => (e) => {
-                    if (e {
-                    if (e.target.closest.target.closest('.delete-btn')) return;
-                    open('.delete-btn')) return;
-                    openModal(item.idModal(item.id);
+                div.addEventListener('click', (e) => {
+                    if (e.target.closest('.delete-btn')) return;
+                    openModal(item.id);
                 });
                 collectionList.appendChild(div);
             });
-       );
-                });
-                collectionList.appendChild(div }
-
-        window.deleteItem = async function(id) {
-           );
-            });
         }
 
-        window.deleteItem = async function tg.showConfirm("Удалить эту(id) {
-            tg.showConfirm("Удалить эту оценку?", async (confirmed) => оценку?", async (confirmed) => {
+        window.deleteItem = async function(id) {
+            tg.showConfirm("Удалить эту оценку?", async (confirmed) => {
                 if (confirmed) {
-                    {
-                if (confirmed) {
-                    historyData = historyData = historyData.filter(item => item.id !== historyData.filter(item => item.id !== id);
-                    await saveHistory();
-                    render id);
+                    historyData = historyData.filter(item => item.id !== id);
                     await saveHistory();
                     renderCollection();
                 }
             });
         };
 
-        collectionSearchCollection();
-                }
-            });
-        };
-
-        collectionSearch.addEventListener.addEventListener('input', renderCollection);
-        collection('input', renderCollection);
+        collectionSearch.addEventListener('input', renderCollection);
         collectionSort.addEventListener('change', renderCollection);
 
-Sort.addEventListener('change', renderCollection);
-
-        // ---        // --- МОДАЛЬНОЕ ОКНО МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ РЕ ДЕТАЛЕЙ РЕЛИЗА ---ЛИЗА ---
-        const modalOverlay
-        const modalOverlay = document = document.getElementById('modal-overlay');
-        const.getElementById('modal-overlay');
-        const modalClose = modalClose = document.getElementById('modal-close-btn');
-        const modalEdit document.getElementById('modal-close-btn');
-       Btn = document.getElementById('modal-edit const modalEditBtn = document.getElementById('modal-edit-btn');
-        const modalSaveEditBtn = document.getElementById('-btn');
-        const modalSaveEditBtn = document.getElementById('modal-save-modal-save-edit-btn');
-       edit-btn');
-        let currentModalItemId let currentModalItemId = null;
-        let = null;
-        let isEditMode = isEditMode = false;
-
-        function openModal(id) false;
+        // --- МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ РЕЛИЗА ---
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalClose = document.getElementById('modal-close-btn');
+        const modalEditBtn = document.getElementById('modal-edit-btn');
+        const modalSaveEditBtn = document.getElementById('modal-save-edit-btn');
+        let currentModalItemId = null;
+        let isEditMode = false;
 
         function openModal(id) {
-            const item = historyData.find {
-            const item = historyData.find(el => el(el => el.id === id);
-            if (!item).id === id);
+            const item = historyData.find(el => el.id === id);
             if (!item) return;
-            currentModalItemId = return;
             currentModalItemId = id;
-            is id;
             isEditMode = false;
 
-            document.getElementById('modal-img').src = item.imageEditMode = false;
-
             document.getElementById('modal-img').src = item.image || 'https://via.placeholder.com/60';
- || 'https://via.placeholder.com/60';
-                       document.getElementById('modal-title').textContent document.getElementById('modal-title').textContent = item.title;
-            document.getElementById('modal = item.title;
-            document.getElementById('modal-artist').-artist').textContent = item.artist;
-           textContent = item.artist;
-            let metaText = `${item.type}` let metaText = `${item.type}`;
-            if (;
-            if (item.extraInfo && itemitem.extraInfo && item.extra.extraInfo.trackCount) metaText += ` • ${item.extraInfo.tInfo.trackCount) metaText += ` • ${itemrackCount} треков`;
-            if (item..extraInfo.trackCount} треков`;
-            if (item.extraInfo &&extraInfo && item.extraInfo.release item.extraInfo.releaseDate) metaTextDate) metaText += ` • ${ += ` • ${item.extraInfoitem.extraInfo.releaseDate}`;
-            document.getElementById.releaseDate}`;
-            document.getElementById('modal-meta('modal-meta').textContent =').textContent = metaText;
+            document.getElementById('modal-title').textContent = item.title;
+            document.getElementById('modal-artist').textContent = item.artist;
+            let metaText = `${item.type}`;
+            if (item.extraInfo && item.extraInfo.trackCount) metaText += ` • ${item.extraInfo.trackCount} треков`;
+            if (item.extraInfo && item.extraInfo.releaseDate) metaText += ` • ${item.extraInfo.releaseDate}`;
+            document.getElementById('modal-meta').textContent = metaText;
 
-            metaText;
-
-            const sl = item.sliders || { rhymes: 5, structure const sl = item.sliders || { rhymes: : 5, style: 5,5, structure: 5, style charisma: 5,: 5, charisma:  vibe: 1 };
-            const modalInputs5, vibe: 1 };
+            const sl = item.sliders || { rhymes: 5, structure: 5, style: 5, charisma: 5, vibe: 1 };
             const modalInputs = {
-                rhymes: document.getElementById('modal = {
                 rhymes: document.getElementById('modal-rhymes'),
-                structure:-rhymes'),
-                structure: document.getElementById('modal document.getElementById('modal-structure'),
-               -structure'),
+                structure: document.getElementById('modal-structure'),
                 style: document.getElementById('modal-style'),
-                charisma: style: document.getElementById('modal-style'),
                 charisma: document.getElementById('modal-charisma'),
- document.getElementById('modal-                vibe: document.getElementById('modal-vibe')
-           charisma'),
                 vibe: document.getElementById('modal-vibe')
             };
             const modalDisplays = {
-                };
-            const modalDisplays = {
                 rhymes: document.getElementById('modal-rhymes-val'),
- rhymes: document.getElementById('modal-rhymes-val'),
                 structure: document.getElementById('modal-structure-val'),
-                style: document.getElementById('                structure: document.getElementById('modal-structuremodal-style-val'),
-                charisma: document.getElementById-val'),
-                style: document.getElementById('modal-style-val('modal-charisma-val'),
-                vibe:'),
+                style: document.getElementById('modal-style-val'),
                 charisma: document.getElementById('modal-charisma-val'),
-                vibe: document.getElementById('modal document.getElementById('modal-vibe-val')
-           -vibe-val')
+                vibe: document.getElementById('modal-vibe-val')
             };
-            modal };
-            modalInputs.rhymes.value = slInputs.rhymes.value = sl.rhymes.rhymes;
-            modalInputs;
-            modalInputs.structure.value =.structure.value = sl.structure sl.structure;
-            modalInputs.style.value = sl;
+            modalInputs.rhymes.value = sl.rhymes;
+            modalInputs.structure.value = sl.structure;
             modalInputs.style.value = sl.style;
             modalInputs.charisma.value = sl.charisma;
-.style;
-            modalInputs.charisma            modalInputs.vibe.value = sl.v.value = sl.charisma;
-            modalInputs.vibeibe;
-            modalDisplays.rhymes.text.value = sl.vibe;
-            modalContent = sl.rhymes;
-            modalDisDisplays.rhymes.textContent = sl.rhymesplays.structure.textContent = sl.st;
+            modalInputs.vibe.value = sl.vibe;
+            modalDisplays.rhymes.textContent = sl.rhymes;
             modalDisplays.structure.textContent = sl.structure;
-            modalructure;
             modalDisplays.style.textContent = sl.style;
-            modalDisDisplays.style.textContent = sl.style;
-            modalDisplays.charisma.textContent = sl.charplays.charisma.textContent = sl.charisma;
-            modalisma;
-            modalDisplays.vibe.textContent = slDisplays.vibe.textContent = sl.v.vibe;
-
-            const colorMap =ibe;
+            modalDisplays.charisma.textContent = sl.charisma;
+            modalDisplays.vibe.textContent = sl.vibe;
 
             const colorMap = {
-                rhymes {
-                rhymes: 'var(--blue-accent): 'var(--blue-accent)',
-                structure: 'var(--blue-ac',
+                rhymes: 'var(--blue-accent)',
                 structure: 'var(--blue-accent)',
-                style: 'var(--blue-accentcent)',
                 style: 'var(--blue-accent)',
                 charisma: 'var(--blue-accent)',
-                vibe)',
-                charisma: 'var(--blue-accent)',
                 vibe: 'var(--purple-accent)'
-           : 'var(--purple-accent)'
             };
-            Object.keys(modalInputs). };
             Object.keys(modalInputs).forEach(key => {
-                const val =forEach(key => {
                 const val = parseInt(modalInputs[key].value);
-                const percent parseInt(modalInputs[key].value);
-                const percent = ((val - 1) / 9) * = ((val - 1) / 9) * 100;
-                const color = 100;
+                const percent = ((val - 1) / 9) * 100;
                 const color = colorMap[key];
-                modalInputs[key colorMap[key];
-                modalInputs[key].style.background].style.background = `linear-gradient = `linear-gradient(to right, ${(to right, ${color} ${percent}%, #2d2e33 ${percent}%)color} ${percent}%, #2d2e33`;
-                modalDisplays[key].style ${percent}%)`;
-                modalDis.color = color;
+                modalInputs[key].style.background = `linear-gradient(to right, ${color} ${percent}%, #2d2e33 ${percent}%)`;
+                modalDisplays[key].style.color = color;
             });
 
-            constplays[key].style.color = color;
-            });
-
-            const baseSum = sl.rhymes + baseSum = sl.rhymes + sl.structure + sl.structure + sl.style sl.style + sl.charisma;
-            const score = Math.round((baseSum + sl.charisma;
-            const score = Math.round((baseSum * 1.4) * vibeMultipliers * 1.4) * vibeMultipliers[sl.vibe - 1]);
-           [sl.vibe - 1]);
-            const modalScore = document.getElementById('modal const modalScore = document.getElementById('modal-score');
-            modal-score');
-            modalScore.textContent = `${score}Score.textContent = `${score} / / 90`;
-            if (score === 90`;
-            if (score ===  90) modalScore.classList.add('90) modalScore.classList.add('gold');
+            const baseSum = sl.rhymes + sl.structure + sl.style + sl.charisma;
+            const score = Math.round((baseSum * 1.4) * vibeMultipliers[sl.vibe - 1]);
+            const modalScore = document.getElementById('modal-score');
+            modalScore.textContent = `${score} / 90`;
+            if (score === 90) modalScore.classList.add('gold');
             else modalScore.classList.remove('gold');
 
-           gold');
-            else modalScore.classList.remove('gold');
-
-            Object.values(modalInputs).forEach(inp => inp Object.values(modalInputs).forEach(inp => inp.disabled = true.disabled = true);
-            modalEdit);
-            modalEditBtn.style.display =Btn.style.display = 'block';
-            'block';
-            modalSaveEditBtn modalSaveEditBtn.style.display = '.style.display = 'none';
-            document.querySelector('.modal-contentnone';
-            document.querySelector('.modal-content').classList.remove').classList.remove('edit-mode('edit-mode');
-            isEditMode');
+            Object.values(modalInputs).forEach(inp => inp.disabled = true);
+            modalEditBtn.style.display = 'block';
+            modalSaveEditBtn.style.display = 'none';
+            document.querySelector('.modal-content').classList.remove('edit-mode');
             isEditMode = false;
 
-            = false;
-
-            modalOverlay.classList.add('active modalOverlay.classList.add('active');
-        }
-
-        modalClose.addEventListener('click', () =>');
+            modalOverlay.classList.add('active');
         }
 
         modalClose.addEventListener('click', () => {
-            modalOverlay {
             modalOverlay.classList.remove('active');
         });
 
-        modalOverlay.classList.remove('active');
-        });
-
-        modalOverlay.addEventListener.addEventListener('click', (e) =>('click', (e) => {
-            if (e.target === modalOver {
+        modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) modalOverlay.classList.remove('active');
-       lay) modalOverlay.classList.remove('active');
- });
-
-        modalEditBtn.addEventListener('click',        });
+        });
 
         modalEditBtn.addEventListener('click', () => {
-            if (!currentModalItemId) return () => {
             if (!currentModalItemId) return;
-            isEdit;
-            isEditMode = trueMode = true;
+            isEditMode = true;
             const modalInputs = {
-;
-            const modalInputs = {
-                rhymes: document.getElementById                rhymes: document.getElementById('modal-rh('modal-rhymes'),
-                structureymes'),
-                structure: document.getElementById('modal: document.getElementById('modal-structure'),
-                style:-structure'),
-                style: document.getElementById('modal-style document.getElementById('modal-style'),
-                charisma'),
-                charisma: document.getElementById(': document.getElementById('modal-charisma'),
-                vibe:modal-charisma'),
-                vibe: document.getElementById document.getElementById('modal-vibe')
-            };
-            Object.values(modalInputs('modal-vibe')
-            };
-            Object.values(modalInputs).forEach(in).forEach(inp => inp.disabledp => inp.disabled = false);
-            = false);
-            modalEditBtn.style.display = 'none modalEditBtn.style.display = 'none';
-            modalSaveEditBtn.style.display = 'block';
-            document.querySelector('.modal-content').class';
-            modalSaveEditBtn.style.display = 'block';
-            document.querySelector('.modal-content').classListList.add('edit-mode');
-       .add('edit-mode');
-        });
-
-        modalSaveEdit });
-
-        modalSaveEditBtn.addEventListener('click', async () =>Btn.addEventListener('click', async () => {
-            if (!currentModalItem {
-            if (!currentModalItemIdId) return;
-            const modalInputs = {
-               ) return;
-            const modalInputs = {
-                rhymes: document.getElementById('modal-rh rhymes: document.getElementById('modal-rhymes'),
-                structure: document.getElementById('ymes'),
+                rhymes: document.getElementById('modal-rhymes'),
                 structure: document.getElementById('modal-structure'),
-                style: document.getElementByIdmodal-structure'),
-                style: document.getElementById('modal-style('modal-style'),
-                charisma: document.getElementById(''),
-                charisma: document.getElementById('modal-modal-charisma'),
-                vibe:charisma'),
+                style: document.getElementById('modal-style'),
+                charisma: document.getElementById('modal-charisma'),
                 vibe: document.getElementById('modal-vibe')
             };
-            const new document.getElementById('modal-vibe')
-           Sliders = {
-                rhymes: parseInt(modalInputs };
+            Object.values(modalInputs).forEach(inp => inp.disabled = false);
+            modalEditBtn.style.display = 'none';
+            modalSaveEditBtn.style.display = 'block';
+            document.querySelector('.modal-content').classList.add('edit-mode');
+        });
+
+        modalSaveEditBtn.addEventListener('click', async () => {
+            if (!currentModalItemId) return;
+            const modalInputs = {
+                rhymes: document.getElementById('modal-rhymes'),
+                structure: document.getElementById('modal-structure'),
+                style: document.getElementById('modal-style'),
+                charisma: document.getElementById('modal-charisma'),
+                vibe: document.getElementById('modal-vibe')
+            };
             const newSliders = {
-                rhymes.rhymes.value),
-                structure:: parseInt(modalInputs.rhymes.value parseInt(modalInputs.structure.value),
-                style:),
-                structure: parseInt(modalInput parseInt(modalInputs.style.values.structure.value),
+                rhymes: parseInt(modalInputs.rhymes.value),
+                structure: parseInt(modalInputs.structure.value),
                 style: parseInt(modalInputs.style.value),
-                charisma:),
-                charisma: parseInt(modalInputs.charisma.value parseInt(modalInputs.charisma.value),
-),
-                vibe: parseInt(modalInput                vibe: parseInt(modalInputs.vibes.vibe.value)
+                charisma: parseInt(modalInputs.charisma.value),
+                vibe: parseInt(modalInputs.vibe.value)
             };
-            const item = historyData.find(el => el.id === current.value)
-            };
-            const item = historyModalItemId);
-            if (!itemData.find(el => el.id === current) return;
-            item.sliders = newSlidersModalItemId);
+            const item = historyData.find(el => el.id === currentModalItemId);
             if (!item) return;
             item.sliders = newSliders;
-            const baseSum = newSl;
-            const baseSum = newSliders.rhymes + newSlidersiders.rhymes + newSliders.structure + newSliders.style + newSliders.char.structure + newSliders.style + newSliders.charisma;
-            const score = Math.round((baseSumisma;
-            const score = Math.round((baseSum * 1.4) * vibe * 1.4) * vibeMultipliers[newSliders.vMultipliers[newSliders.vibe - 1]);
+            const baseSum = newSliders.rhymes + newSliders.structure + newSliders.style + newSliders.charisma;
+            const score = Math.round((baseSum * 1.4) * vibeMultipliers[newSliders.vibe - 1]);
             item.score = score;
-           ibe - 1]);
-            item.score const modalScore = document.getElementById('modal = score;
-            const modalScore = document.getElementById('-score');
-            modalScore.textContent = `${scoremodal-score');
-            modalScore.textContent =} / 90`;
-            if (score === `${score} / 90`;
-            90) modalScore.classList.add('gold');
-            else if (score === 90) modalScore.classList.add(' modalScore.classList.remove('gold');
-           gold');
-            else modalScore.classList.remove await saveHistory();
-            renderCollection('gold');
+            const modalScore = document.getElementById('modal-score');
+            modalScore.textContent = `${score} / 90`;
+            if (score === 90) modalScore.classList.add('gold');
+            else modalScore.classList.remove('gold');
             await saveHistory();
             renderCollection();
 
-            Object.values(modalInputs();
-
-            Object.values(modalInputs).forEach(inp =>).forEach(inp => inp.disabled = inp.disabled = true);
-            modal true);
-            modalEditBtn.style.displayEditBtn.style.display = 'block';
-            modal = 'block';
-            modalSaveEditBtnSaveEditBtn.style.display = 'none';
-            document.querySelector('.modal-content').classList.style.display = 'none';
-            document.remove('edit-mode');
-            isEditMode = false.querySelector('.modal-content').classList.remove('edit-mode;
-            tg.showAlert('Оценка обновлена!');
+            Object.values(modalInputs).forEach(inp => inp.disabled = true);
+            modalEditBtn.style.display = 'block';
+            modalSaveEditBtn.style.display = 'none';
+            document.querySelector('.modal-content').classList.remove('edit-mode');
             isEditMode = false;
             tg.showAlert('Оценка обновлена!');
         });
 
-        // Обновление');
-        });
-
-        // Обновление балла в модалке при редактировании балла в модалке при
-        const modalSliderIds = ['modal редактировании
-        const modalSliderIds = ['modal-rhymes', 'modal-st-rhymes', 'modal-structure', 'modal-style', 'modalructure', 'modal-style', 'modal-charisma',-charisma', 'modal-vibe'];
-        modal 'modal-vibe'];
-        modalSliderSliderIds.forEach(id => {
-            const inpIds.forEach(id => {
+        // Обновление балла в модалке при редактировании
+        const modalSliderIds = ['modal-rhymes', 'modal-structure', 'modal-style', 'modal-charisma', 'modal-vibe'];
+        modalSliderIds.forEach(id => {
             const inp = document.getElementById(id);
-            inp.addEventListener('input', () = document.getElementById(id);
-            inp.addEventListener => {
+            inp.addEventListener('input', () => {
                 if (!isEditMode) return;
-               ('input', () => {
-                if (!isEdit const val = parseInt(inp.valueMode) return;
                 const val = parseInt(inp.value);
-                const displayId);
-                const displayId = id.replace('modal-', ' = id.replace('modal-', '') + '-val') + '-val';
-                const display';
-                const displayEl = document.getElementByIdEl = document.getElementById('modal-' + displayId);
-               ('modal-' + displayId);
+                const displayId = id.replace('modal-', '') + '-val';
+                const displayEl = document.getElementById('modal-' + displayId);
                 displayEl.textContent = val;
-                const percent = ((val - 1) / 9 displayEl.textContent = val;
-                const percent =) * 100;
-                const color ((val - 1) / 9Map = {
-                    'modal-rhymes': 'var) * 100;
+                const percent = ((val - 1) / 9) * 100;
                 const colorMap = {
-                    'modal-rhymes': '(--blue-accent)',
-                    'var(--blue-accent)',
-                    'modal-structure': 'var(--blue-accent)modal-structure': 'var(--blue',
-                    'modal-style': 'var(---accent)',
-                    'modal-style': 'blue-accent)',
-                    'modalvar(--blue-accent)',
-                    '-charisma': 'var(--blue-accent)modal-charisma': 'var(--blue-accent)',
-                    'modal-vibe',
-                    'modal-vibe': 'var': 'var(--purple-accent)'
-               (--purple-accent)'
+                    'modal-rhymes': 'var(--blue-accent)',
+                    'modal-structure': 'var(--blue-accent)',
+                    'modal-style': 'var(--blue-accent)',
+                    'modal-charisma': 'var(--blue-accent)',
+                    'modal-vibe': 'var(--purple-accent)'
                 };
                 const color = colorMap[id];
-                };
-                const color = colorMap[id inp.style.background = `linear-gradient(to right];
-                inp.style.background = `, ${color} ${percent}%, #2d2linear-gradient(to right, ${color} ${percent}e33 ${percent}%, #2d2e33 ${percent%)`;
+                inp.style.background = `linear-gradient(to right, ${color} ${percent}%, #2d2e33 ${percent}%)`;
                 displayEl.style.color = color;
-               }%)`;
-                displayEl.style.color = color;
-                const rhymes = parseInt(document.getElementById(' const rhymes = parseInt(document.getElementById('modal-rhymes').modal-rhymes').value);
-                constvalue);
-                const structure = parseInt(document structure = parseInt(document.getElementById('modal-st.getElementById('modal-structure').value);
-                const style =ructure').value);
-                const style = parseInt(document parseInt(document.getElementById('modal-style').value);
-                const charisma = parseInt(document.getElementById('modal-.getElementById('modal-style').value);
+                const rhymes = parseInt(document.getElementById('modal-rhymes').value);
+                const structure = parseInt(document.getElementById('modal-structure').value);
+                const style = parseInt(document.getElementById('modal-style').value);
                 const charisma = parseInt(document.getElementById('modal-charisma').value);
-                const vibecharisma').value);
-                const vibe = = parseInt(document.getElementById parseInt(document.getElementById('modal-v('modal-vibe').value);
-                const baseSum =ibe').value);
-                const baseSum = rhymes + structure + style + charisma rhymes + structure + style + charisma;
-                const score = Math.round((baseSum * ;
-                const score = Math.round((baseSum *1.4) * vibeMultipl 1.4) * vibeMultipliers[vibe - 1]);
-               iers[vibe - 1]);
+                const vibe = parseInt(document.getElementById('modal-vibe').value);
+                const baseSum = rhymes + structure + style + charisma;
+                const score = Math.round((baseSum * 1.4) * vibeMultipliers[vibe - 1]);
                 const modalScore = document.getElementById('modal-score');
-                modal const modalScore = document.getElementById('modal-score');
-                modalScore.textContent = `${score} /Score.textContent = `${score} / 90`;
-                if (score 90`;
+                modalScore.textContent = `${score} / 90`;
                 if (score === 90) modalScore.classList.add('gold');
-                else === 90) modalScore.classList.add('gold');
- modalScore.classList.remove('gold');
+                else modalScore.classList.remove('gold');
             });
         });
 
-                       else modalScore.classList.remove('gold');
-            });
-        });
-
-        // --- МОД // --- МОДАЛЬНОЕАЛЬНОЕ ОКНО КРИТ ОКНО КРИТЕРИЕВ ---ЕРИЕВ ---
-        const criteriaModal
-        const criteriaModal = document.getElementById(' = document.getElementById('criteria-modalcriteria-modal');
-        const criteriaClose = document.getElementById('');
-        const criteriaClose = document.getElementById('criteria-closecriteria-close-btn');
+        // --- МОДАЛЬНОЕ ОКНО КРИТЕРИЕВ ---
+        const criteriaModal = document.getElementById('criteria-modal');
+        const criteriaClose = document.getElementById('criteria-close-btn');
         const criteriaBtn = document.getElementById('criteria-btn');
 
-        criteria-btn');
-        const criteriaBtn = documentBtn.addEventListener('click', () =>.getElementById('criteria-btn');
-
-        criteriaBtn {
+        criteriaBtn.addEventListener('click', () => {
             criteriaModal.classList.add('active');
         });
 
-        criteria.addEventListener('click', () => {
-            criteriaModal.classList.add('active');
-        });
-
-        criteriaClose.addEventListener('click', () =>Close.addEventListener('click', () => {
+        criteriaClose.addEventListener('click', () => {
             criteriaModal.classList.remove('active');
         });
 
-        criteria {
-            criteriaModal.classList.remove('active');
-        });
-
-        criteriaModal.addEventListener('click', (e)Modal.addEventListener('click', (e) => {
-            if (e.target === criteriaModal) criteria => {
-            if (e.target === criteriaModal.classList.remove('active');
-       Modal) criteriaModal.classList.remove('active');
-        });
-
-        // --- ГЕНЕРАЦИ });
-
-        // --- ГЕНЕРАЦИЯ КАРЯ КАРТОЧКИ (изТОЧКИ (из модалки релиза) ---
-        модалки релиза) --- document.getElementById('modal-card-btn').addEventListener('click
-        document.getElementById('modal-card-btn').', () => {
-            if (!currentaddEventListener('click', () => {
-ModalItemId) {
-                tg.showAlert('С            if (!currentModalItemId) {
-                tg.showAlert('Сначала откройначала откройте релиз вте релиз в коллекции');
-                коллекции');
-                return;
-            return;
-            }
-            const item = }
-            const item = historyData.find(el => el.id === historyData.find(el => el.id === currentModalItemId currentModalItemId);
-            if (!item) return;
-
-            // Заполня);
-            if (!item) returnем шаблон данными;
-
-            // Заполняем шаб из item
-            document.getElementById('card-cover').src = itemлон данными из item
-            document.getElementById('card-cover').src = item.image || 'https://via.placeholder.image || 'https://via.placeholder.com/.com/80';
-            document.getElementById('80';
-            document.getElementById('card-title').textcard-title').textContent = item.title;
-            document.getElementByIdContent = item.title;
-            document.getElementById('card-artist').textContent = item.artist;
-            document.getElementById('card-type('card-artist').textContent = item.artist').textContent = item.type;
-
-            const score;
-            document.getElementById('card-type').text = item.score;
-            document.getElementById('Content = item.type;
-
-            const score = item.score;
-            document.getElementById('card-score').textContent = `${score}/90card-score').textContent = `${score}/90`;
-
-            const sl = item.sl`;
-
-            const sl = item.sliders || { rhymes: 5,iders || { rhymes: 5, structure: 5, style:  structure: 5, style: 5, charisma5, charisma: 5, vibe: 1 };
-            document.getElementById('card-r: 5, vibe: 1 };
-            document.getElementById('card-rhymes').style.width = (sl.hymes').style.width = (sl.rhymes / 10 * 100) + '%rhymes / 10 * 100';
-            document.getElementById('card-rhymes) + '%';
-            document.getElementById('-val').textContent = sl.rhymes;
-            documentcard-rhymes-val').textContent = sl.rh.getElementById('card-structure').style.widthymes;
-            document.getElementById('card-structure').style.width = (sl.structure / 10 = (sl.structure / 10 * 100) * 100) + '%';
-            + '%';
-            document.getElementById('card-structure-val').textContent = sl.st document.getElementById('card-structure-val').textContentructure;
-            document.getElementById('card = sl.structure;
-            document.getElementById('card-style').style.width = (sl.style / 10 *-style').style.width = (sl.style / 10 * 100) + 100) + '%';
-            document.getElementById('card-style '%';
-            document.getElementById('card-style-val').textContent-val').textContent = sl.style = sl.style;
-            document.getElementById(';
-            document.getElementById('card-charisma').style.width =card-charisma').style.width = (sl.charisma (sl.charisma / 10 * / 10 * 100) + 100) + '%';
-            document.getElementById('card- '%';
-            document.getElementById('card-charismacharisma-val').textContent = sl.charisma;
-            document.getElementById('card-val').textContent = sl.charisma;
-           -vibe').style.width = (sl document.getElementById('card-vibe').style.width = (sl.vibe / 10 * 100.vibe / 10 * 100) + '%) + '%';
-            document.getElementById('card-vibe';
-            document.getElementById('card-vibe-val-val').textContent = sl.vibe').textContent = sl.vibe;
-
-           ;
-
-            // Делаем блок види // Делаем блок видимым для скринмым для скриншота
-            const card = documentшота
-            const card = document.getElementById('card-template.getElementById('card-template');
-            card.style.position = 'fixed';
-            card.style');
-            card.style.position = 'fixed.top = '0';
-            card.style.left = '0';
-            card.style.top = '0';
-            card.style';
-            card.style.display = 'flex.left = '0';
-            card.style';
-            card.style.zIndex = '.display = 'flex';
-            card.style.zIndex = '9999';
-
-            // Ждём9999';
-
-            // Ждём ренде рендеринга
-            setTimeout(()ринга
-            setTimeout(() => {
-                html2canvas(card, {
-                    => {
-                html2canvas(card, {
-                    scale: 2,
-                    backgroundColor: '#111113 scale: 2,
-                    backgroundColor:',
-                    allowTaint: false,
-                    '#111113',
-                    allowTaint: false useCORS: true
-                }).,
-                    useCORS: true
-                }).then(canvas => {
-                    // Скрываемthen(canvas => {
-                    // блок обратно
-                    card.style.top = Скрываем блок обратно
-                    card.style.top = '-9999px';
-                    card.style.left = '-9999px';
-
-                    '-9999px';
-                    card.style.left = '-999 // Показываем картинку9px';
-
-                    // Показываем картинку в модальном окне
-                    const dataUrl = в модальном окне
-                    canvas.toDataURL('image/png');
-                    const dataUrl = canvas.toDataURL('image/png document.getElementById('card-result').src = dataUrl');
-                    document.getElementById('card-result').src = dataUrl;
-                    document.getElementById('card-modal').;
-                    document.getElementById('card-modal').classList.add('active');
-
-                    //classList.add('active');
-
-                    // Настройка кнопки сохранения
-                    document.getElementById Настройка кнопки сохранения
-                    document.getElementById('card-download-btn').onclick('card-download-btn').onclick = function() {
-                        const link = document.createElement = function() {
-                        const link = document.createElement('a');
-                        link.d('a');
-                        link.download = `оownload = `оценка_${ценка_${item.title}.png`;
-                       item.title}.png`;
-                        link.href = dataUrl link.href = dataUrl;
-                        link.click;
-                        link.click();
-                    };
-
-               ();
-                    };
-
-                }).catch(err => {
-                    tg.showAlert('Ошибка при }).catch(err => {
-                    tg.show создании карточки: ' + errAlert('Ошибка при создании карточки:);
-                });
-            }, 300);
-        ' + err);
-                });
-            }, 300);
-        });
-
-        // --- З });
-
-        // --- ЗАКРЫТИЕ МАКРЫТИЕ МОДАЛКИ КАРТОЧОДАЛКИ КАРТОЧКИ ---
-        document.getElementById('card-modalКИ ---
-        document.getElementById('-close').addEventListener('click', () =>card-modal-close').addEventListener('click', () => {
-            document.getElementById('card-modal'). {
-            document.getElementById('card-modal').classList.remove('active');
-        });
-
-        document.getElementByIdclassList.remove('active');
-        });
-
-        document.getElementById('('card-modal').addEventListener('click', (e) => {
-            if (ecard-modal').addEventListener('click',.target === document.getElementById('card-modal')) {
-                document (e) => {
-            if (e.target === document.getElementById('card-modal').classList.remove.getElementById('card-modal')) {
-                document.getElementById('card-modal').classList.remove('active');
-           ('active');
-            }
-        });
-
-        render }
+        criteriaModal.addEventListener('click', (e) => {
+            if (e.target === criteriaModal) criteriaModal.classList.remove('active');
         });
 
         renderCollection();
-   Collection();
     </script>
-</body>
- </script>
 </body>
 </html>
