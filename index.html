@@ -55,15 +55,15 @@
         .badge { background: #2c2d31; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: bold; }
 
         /* Слайдеры */
-        .sliders-group { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; } /* уменьшил gap */
+        .sliders-group { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
         .sliders-group h2 { 
-            margin: 0 0 4px 0; /* убрал отступ снизу */
+            margin: 0 0 4px 0;
             font-size: 1.1rem; 
             color: var(--text-muted); 
         }
         .blue-group { border-left: 4px solid var(--blue-accent); }
         .purple-group { border-left: 4px solid var(--purple-accent); }
-        .slider-container { display: flex; flex-direction: column; gap: 6px; } /* уменьшил gap */
+        .slider-container { display: flex; flex-direction: column; gap: 6px; }
         .slider-header { display: flex; justify-content: space-between; font-size: 0.9rem; }
         .slider-header .value { font-weight: bold; font-size: 1.1rem; }
         .blue-group .value { color: var(--blue-accent); }
@@ -80,7 +80,7 @@
             padding-top: 10px;
         }
         .score-display {
-            font-size: 8rem;          /* ещё больше */
+            font-size: 8rem;
             font-weight: 900;
             color: var(--text-muted);
             text-shadow: 0 0 10px rgba(255,255,255,0.05);
@@ -227,10 +227,23 @@
         .modal-release-header .info .artist { color: var(--blue-accent); font-size: 0.9rem; }
         .modal-release-header .info .meta { color: var(--text-muted); font-size: 0.8rem; }
 
-        .modal-sliders .sliders-group { background: transparent; border: none; padding: 0; }
-        .modal-sliders .sliders-group h2 { font-size: 1rem; margin-bottom: 2px; }
-        .modal-sliders .slider-container { gap: 4px; }
-        .modal-sliders .slider-header .value { font-size: 1rem; }
+        /* Новый стиль для модальных слайдеров — единый блок без разделителей */
+        .modal-sliders .sliders-group {
+            border: none;
+            padding: 0;
+            background: transparent;
+            gap: 6px;
+        }
+        .modal-sliders .slider-container {
+            gap: 2px;
+        }
+        .modal-sliders .slider-header .value {
+            font-size: 1rem;
+        }
+        .modal-sliders .slider-header span:first-child {
+            font-size: 0.9rem;
+        }
+
         .modal-score {
             font-size: 3.5rem;
             font-weight: 900;
@@ -307,14 +320,14 @@
             </div>
         </div>
         <div class="sliders-group blue-group">
-            <h2>Базовые показатели</h2> <!-- убрал (×1.4) -->
+            <h2>Базовые показатели</h2>
             <div class="slider-container"><div class="slider-header"><span>Рифмы / Образы</span><span class="value" id="rhymes-val">5</span></div><input type="range" id="rhymes" min="1" max="10" value="5"></div>
             <div class="slider-container"><div class="slider-header"><span>Структура / Ритмика</span><span class="value" id="structure-val">5</span></div><input type="range" id="structure" min="1" max="10" value="5"></div>
             <div class="slider-container"><div class="slider-header"><span>Реализация стиля</span><span class="value" id="style-val">5</span></div><input type="range" id="style" min="1" max="10" value="5"></div>
             <div class="slider-container"><div class="slider-header"><span>Индивидуальность / Харизма</span><span class="value" id="charisma-val">5</span></div><input type="range" id="charisma" min="1" max="10" value="5"></div>
         </div>
         <div class="sliders-group purple-group">
-            <h2>Атмосфера / Вайб</h2> <!-- убрал (от ×1.0 до ×1.6) -->
+            <h2>Атмосфера / Вайб</h2>
             <div class="slider-container"><div class="slider-header"><span>Множитель</span><span class="value" id="vibe-val">1</span></div><input type="range" id="vibe" min="1" max="10" value="1"></div>
         </div>
         <div class="footer-score">
@@ -356,17 +369,31 @@
                     <div class="meta" id="modal-meta">Альбом • 16 треков</div>
                 </div>
             </div>
+            <!-- Единый блок слайдеров без разделения -->
             <div class="modal-sliders">
-                <div class="sliders-group blue-group">
-                    <h2>Базовые показатели</h2>
-                    <div class="slider-container"><div class="slider-header"><span>Рифмы / Образы</span><span class="value" id="modal-rhymes-val">5</span></div><input type="range" id="modal-rhymes" min="1" max="10" value="5" disabled></div>
-                    <div class="slider-container"><div class="slider-header"><span>Структура / Ритмика</span><span class="value" id="modal-structure-val">5</span></div><input type="range" id="modal-structure" min="1" max="10" value="5" disabled></div>
-                    <div class="slider-container"><div class="slider-header"><span>Реализация стиля</span><span class="value" id="modal-style-val">5</span></div><input type="range" id="modal-style" min="1" max="10" value="5" disabled></div>
-                    <div class="slider-container"><div class="slider-header"><span>Индивидуальность / Харизма</span><span class="value" id="modal-charisma-val">5</span></div><input type="range" id="modal-charisma" min="1" max="10" value="5" disabled></div>
-                </div>
-                <div class="sliders-group purple-group">
-                    <h2>Атмосфера / Вайб</h2>
-                    <div class="slider-container"><div class="slider-header"><span>Множитель</span><span class="value" id="modal-vibe-val">1</span></div><input type="range" id="modal-vibe" min="1" max="10" value="1" disabled></div>
+                <div class="sliders-group">
+                    <!-- Первые 4 с синим цветом значений -->
+                    <div class="slider-container" style="border-left: 4px solid var(--blue-accent); padding-left: 8px;">
+                        <div class="slider-header"><span>Рифмы / Образы</span><span class="value" id="modal-rhymes-val" style="color: var(--blue-accent);">5</span></div>
+                        <input type="range" id="modal-rhymes" min="1" max="10" value="5" disabled>
+                    </div>
+                    <div class="slider-container" style="border-left: 4px solid var(--blue-accent); padding-left: 8px;">
+                        <div class="slider-header"><span>Структура / Ритмика</span><span class="value" id="modal-structure-val" style="color: var(--blue-accent);">5</span></div>
+                        <input type="range" id="modal-structure" min="1" max="10" value="5" disabled>
+                    </div>
+                    <div class="slider-container" style="border-left: 4px solid var(--blue-accent); padding-left: 8px;">
+                        <div class="slider-header"><span>Реализация стиля</span><span class="value" id="modal-style-val" style="color: var(--blue-accent);">5</span></div>
+                        <input type="range" id="modal-style" min="1" max="10" value="5" disabled>
+                    </div>
+                    <div class="slider-container" style="border-left: 4px solid var(--blue-accent); padding-left: 8px;">
+                        <div class="slider-header"><span>Индивидуальность / Харизма</span><span class="value" id="modal-charisma-val" style="color: var(--blue-accent);">5</span></div>
+                        <input type="range" id="modal-charisma" min="1" max="10" value="5" disabled>
+                    </div>
+                    <!-- Пятый с фиолетовым цветом и названием "Атмосфера / Вайб" -->
+                    <div class="slider-container" style="border-left: 4px solid var(--purple-accent); padding-left: 8px;">
+                        <div class="slider-header"><span>Атмосфера / Вайб</span><span class="value" id="modal-vibe-val" style="color: var(--purple-accent);">1</span></div>
+                        <input type="range" id="modal-vibe" min="1" max="10" value="1" disabled>
+                    </div>
                 </div>
             </div>
             <div class="modal-score" id="modal-score">28 / 90</div>
@@ -877,11 +904,21 @@
             modalDisplays.charisma.textContent = sl.charisma;
             modalDisplays.vibe.textContent = sl.vibe;
 
+            // Обновляем цвета слайдеров в модалке
+            const colorMap = {
+                rhymes: 'var(--blue-accent)',
+                structure: 'var(--blue-accent)',
+                style: 'var(--blue-accent)',
+                charisma: 'var(--blue-accent)',
+                vibe: 'var(--purple-accent)'
+            };
             Object.keys(modalInputs).forEach(key => {
                 const val = parseInt(modalInputs[key].value);
                 const percent = ((val - 1) / 9) * 100;
-                const color = key === 'vibe' ? 'var(--purple-accent)' : 'var(--blue-accent)';
+                const color = colorMap[key];
                 modalInputs[key].style.background = `linear-gradient(to right, ${color} ${percent}%, #2d2e33 ${percent}%)`;
+                // также обновим цвет значения
+                modalDisplays[key].style.color = color;
             });
 
             const baseSum = sl.rhymes + sl.structure + sl.style + sl.charisma;
@@ -969,10 +1006,19 @@
                 if (!isEditMode) return;
                 const val = parseInt(inp.value);
                 const displayId = id.replace('modal-', '') + '-val';
-                document.getElementById('modal-' + displayId).textContent = val;
+                const displayEl = document.getElementById('modal-' + displayId);
+                displayEl.textContent = val;
                 const percent = ((val - 1) / 9) * 100;
-                const color = id === 'modal-vibe' ? 'var(--purple-accent)' : 'var(--blue-accent)';
+                const colorMap = {
+                    'modal-rhymes': 'var(--blue-accent)',
+                    'modal-structure': 'var(--blue-accent)',
+                    'modal-style': 'var(--blue-accent)',
+                    'modal-charisma': 'var(--blue-accent)',
+                    'modal-vibe': 'var(--purple-accent)'
+                };
+                const color = colorMap[id];
                 inp.style.background = `linear-gradient(to right, ${color} ${percent}%, #2d2e33 ${percent}%)`;
+                displayEl.style.color = color;
                 const rhymes = parseInt(document.getElementById('modal-rhymes').value);
                 const structure = parseInt(document.getElementById('modal-structure').value);
                 const style = parseInt(document.getElementById('modal-style').value);
