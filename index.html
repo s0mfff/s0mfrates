@@ -60,6 +60,18 @@
             margin: 0 0 4px 0;
             font-size: 1.1rem; 
             color: var(--text-muted); 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sliders-group h2 .criteria-link {
+            font-size: 0.8rem;
+            color: var(--blue-accent);
+            cursor: pointer;
+            background: none;
+            border: none;
+            text-decoration: underline;
+            font-weight: normal;
         }
         .blue-group { border-left: 4px solid var(--blue-accent); }
         .purple-group { border-left: 4px solid var(--purple-accent); }
@@ -169,7 +181,7 @@
         .mode-btn.active { background: var(--blue-accent); }
         .mode-btn:active { transform: scale(0.95); }
 
-        /* Модальное окно */
+        /* Модальное окно деталей релиза */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -227,7 +239,7 @@
         .modal-release-header .info .artist { color: var(--blue-accent); font-size: 0.9rem; }
         .modal-release-header .info .meta { color: var(--text-muted); font-size: 0.8rem; }
 
-        /* Новый стиль для модальных слайдеров — единый блок без разделителей */
+        /* Модальные слайдеры */
         .modal-sliders .sliders-group {
             border: none;
             padding: 0;
@@ -267,6 +279,25 @@
         .modal-actions .save-edit-btn { background: var(--blue-accent); color: #fff; display: none; }
         .edit-mode .modal-actions .save-edit-btn { display: block; }
         .edit-mode .modal-actions .edit-btn { display: none; }
+
+        /* Модальное окно критериев */
+        .criteria-content {
+            padding: 8px 0;
+        }
+        .criteria-content h3 {
+            color: var(--blue-accent);
+            margin: 12px 0 4px 0;
+            font-size: 1.1rem;
+        }
+        .criteria-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0 0 8px 0;
+        }
+        .criteria-content .vibe-title {
+            color: var(--purple-accent);
+        }
     </style>
 </head>
 <body>
@@ -320,7 +351,10 @@
             </div>
         </div>
         <div class="sliders-group blue-group">
-            <h2>Базовые показатели</h2>
+            <h2>
+                Базовые показатели
+                <button class="criteria-link" id="criteria-btn">Критерии оценки</button>
+            </h2>
             <div class="slider-container"><div class="slider-header"><span>Рифмы / Образы</span><span class="value" id="rhymes-val">5</span></div><input type="range" id="rhymes" min="1" max="10" value="5"></div>
             <div class="slider-container"><div class="slider-header"><span>Структура / Ритмика</span><span class="value" id="structure-val">5</span></div><input type="range" id="structure" min="1" max="10" value="5"></div>
             <div class="slider-container"><div class="slider-header"><span>Реализация стиля</span><span class="value" id="style-val">5</span></div><input type="range" id="style" min="1" max="10" value="5"></div>
@@ -357,7 +391,7 @@
         <button class="nav-btn" data-tab="collection">Моя коллекция</button>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ -->
+    <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ РЕЛИЗА -->
     <div id="modal-overlay" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close" id="modal-close-btn">✕</button>
@@ -369,10 +403,8 @@
                     <div class="meta" id="modal-meta">Альбом • 16 треков</div>
                 </div>
             </div>
-            <!-- Единый блок слайдеров без разделения -->
             <div class="modal-sliders">
                 <div class="sliders-group">
-                    <!-- Первые 4 с синим цветом значений -->
                     <div class="slider-container" style="border-left: 4px solid var(--blue-accent); padding-left: 8px;">
                         <div class="slider-header"><span>Рифмы / Образы</span><span class="value" id="modal-rhymes-val" style="color: var(--blue-accent);">5</span></div>
                         <input type="range" id="modal-rhymes" min="1" max="10" value="5" disabled>
@@ -389,7 +421,6 @@
                         <div class="slider-header"><span>Индивидуальность / Харизма</span><span class="value" id="modal-charisma-val" style="color: var(--blue-accent);">5</span></div>
                         <input type="range" id="modal-charisma" min="1" max="10" value="5" disabled>
                     </div>
-                    <!-- Пятый с фиолетовым цветом и названием "Атмосфера / Вайб" -->
                     <div class="slider-container" style="border-left: 4px solid var(--purple-accent); padding-left: 8px;">
                         <div class="slider-header"><span>Атмосфера / Вайб</span><span class="value" id="modal-vibe-val" style="color: var(--purple-accent);">1</span></div>
                         <input type="range" id="modal-vibe" min="1" max="10" value="1" disabled>
@@ -400,6 +431,33 @@
             <div class="modal-actions">
                 <button class="action-btn edit-btn" id="modal-edit-btn">✏️ Изменить</button>
                 <button class="action-btn save-edit-btn" id="modal-save-edit-btn" style="display:none;">💾 Сохранить изменения</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО КРИТЕРИЕВ -->
+    <div id="criteria-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="criteria-close-btn">✕</button>
+            <h2 style="margin-top: 0; color: var(--gold);">Критерии 90-балльной системы</h2>
+            <div class="criteria-content">
+                <h3>1. Рифмы / Образы</h3>
+                <p>Оценка за текст учитывает особенности музыкального жанра или поджанра. Легкая фоновая поп-музыка или электронная “долбежка“ для слэма могут получать максимальную оценку за довольно тривиальные конструкции. А в некоторых текстоориентированных поджанрах хип-хопа для высшего балла потребуются изысканные рифмоконструкции с глубоким смыслом. Разной музыке присуще своё смысловое и текстовое наполнение.</p>
+
+                <h3>2. Структура / Ритмика</h3>
+                <p><strong>Ритмика</strong> — качество “стихотворного ритма“ — мелодичность и эмоциональные контрасты куплетов, припевов, бриджей и прочих отдельных частей песни.<br>
+                <strong>Структура</strong> — насколько разные части песни звучат гармонично между собой по всему хронометражу и образуют цельную конструкцию. В случае альбома учитывается концепт и структура расположения песен в альбоме.</p>
+
+                <h3>3. Реализация стиля</h3>
+                <p><strong>Работу исполнителя</strong> — качество вокала, речитатива и умение работать с выбранными мелодиями и тактами.<br>
+                <strong>Работу звукорежиссера и саунд-продюсера</strong> — качество сведения песни и инструментала.</p>
+
+                <h3>4. Индивидуальность / Харизма</h3>
+                <p><strong>Индивидуальность</strong> — специфика тембра голоса и выбранного артистом стиля исполнения — насколько артист самобытен и узнаваем на музыкальном поприще.<br>
+                <strong>Харизма</strong> — насколько артист смог погрузить слушателя в передаваемые эмоции — “верю“ или “не верю“ песне.</p>
+
+                <h3 class="vibe-title">5. Атмосфера / Вайб</h3>
+                <p>Ваше субъективное восприятие совокупности элементов релиза: насколько автор сумел передать палитру эмоций и погрузить в атмосферу композиции.</p>
             </div>
         </div>
     </div>
@@ -750,7 +808,6 @@
         function updateScoreColor(score) {
             if (score === 90) {
                 scoreDisplay.classList.add('gold');
-                console.log('✅ Добавлен класс gold для оценки 90/90');
             } else {
                 scoreDisplay.classList.remove('gold');
             }
@@ -858,7 +915,7 @@
         collectionSearch.addEventListener('input', renderCollection);
         collectionSort.addEventListener('change', renderCollection);
 
-        // --- МОДАЛЬНОЕ ОКНО ---
+        // --- МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ РЕЛИЗА ---
         const modalOverlay = document.getElementById('modal-overlay');
         const modalClose = document.getElementById('modal-close-btn');
         let currentModalItemId = null;
@@ -904,7 +961,6 @@
             modalDisplays.charisma.textContent = sl.charisma;
             modalDisplays.vibe.textContent = sl.vibe;
 
-            // Обновляем цвета слайдеров в модалке
             const colorMap = {
                 rhymes: 'var(--blue-accent)',
                 structure: 'var(--blue-accent)',
@@ -917,7 +973,6 @@
                 const percent = ((val - 1) / 9) * 100;
                 const color = colorMap[key];
                 modalInputs[key].style.background = `linear-gradient(to right, ${color} ${percent}%, #2d2e33 ${percent}%)`;
-                // также обновим цвет значения
                 modalDisplays[key].style.color = color;
             });
 
@@ -1031,6 +1086,23 @@
                 if (score === 90) modalScore.classList.add('gold');
                 else modalScore.classList.remove('gold');
             });
+        });
+
+        // --- МОДАЛЬНОЕ ОКНО КРИТЕРИЕВ ---
+        const criteriaModal = document.getElementById('criteria-modal');
+        const criteriaClose = document.getElementById('criteria-close-btn');
+        const criteriaBtn = document.getElementById('criteria-btn');
+
+        criteriaBtn.addEventListener('click', () => {
+            criteriaModal.classList.add('active');
+        });
+
+        criteriaClose.addEventListener('click', () => {
+            criteriaModal.classList.remove('active');
+        });
+
+        criteriaModal.addEventListener('click', (e) => {
+            if (e.target === criteriaModal) criteriaModal.classList.remove('active');
         });
 
         renderCollection();
