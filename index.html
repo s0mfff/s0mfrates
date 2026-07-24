@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>РЗТ — Музыка</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #111113;
+            --card-bg: #1d1e22;
+            --text-color: #ffffff;
+            --text-muted: #8e8f93;
+            --blue-accent: #3a86ff;
+            --purple-accent: #8338ec;
+            --gold: #FFD700;
+            --border-color: #2c2d31;
+            --red-accent: #ff4757;
+        }
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            user-select: none;
+        }
+        .tab-content { display: none; flex-direction: column; gap: 16px; padding: 16px; overflow-y: auto; flex-grow: 1; padding-bottom: 80px; }
+        .tab-content.active { display: flex; }
+
+        /* Поиск */
+        .search-container { position: relative; }
+        .search-input, .collection-search { width: 100%; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; color: #fff; font-size: 1rem; outline: none; box-sizing: border-box; }
+        .search-input:focus, .collection-search:focus { border-color: var(--blue-accent); }
+        .search-results { position: absolute; top: 100%; left: 0; right: 0; background: #18191d; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 12px 12px; max-height: 250px; overflow-y: auto; z-index: 10; display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .search-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; }
+        .search-item:hover { background: #25262b; }
+        .search-item img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; }
+        .search-item-info { display: flex; flex-direction: column; gap: 2px; }
+        .search-item-title { font-weight: 600; font-size: 0.9rem; }
+        .search-item-artist { font-size: 0.75rem; color: var(--text-muted); }
+        .search-msg { padding: 16px; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+
+        /* Карточка выбранного релиза */
+        .selected-release-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; display: none; align-items: center; gap: 16px; }
+        .selected-release-card img { width: 70px; height: 70px; border-radius: 8px; border: 1px solid var(--border-color); object-fit: cover; }
+        .release-details { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
+        .release-title { font-size: 1.1rem; font-weight: bold; }
+        .release-artist { font-size: 0.9rem; color: var(--blue-accent); }
+        .release-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .badge { background: #2c2d31; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: bold; }
+
+        /* Слайдеры */
+        .sliders-group { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; } /* уменьшил gap */
+        .sliders-group h2 { 
+            margin: 0 0 4px 0; /* убрал отступ снизу */
+            font-size: 1.1rem; 
+            color: var(--text-muted); 
+        }
+        .blue-group { border-left: 4px solid var(--blue-accent); }
+        .purple-group { border-left: 4px solid var(--purple-accent); }
+        .slider-container { display: flex; flex-direction: column; gap: 6px; } /* уменьшил gap */
+        .slider-header { display: flex; justify-content: space-between; font-size: 0.9rem; }
+        .slider-header .value { font-weight: bold; font-size: 1.1rem; }
+        .blue-group .value { color: var(--blue-accent); }
+        .purple-group .value { color: var(--purple-accent); }
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #2d2e33; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle, #ececec 0%, #a2a2a2 100%); border: 2px solid #555; box-shadow: 0 2px 4px rgba(0,0,0,0.4); cursor: pointer; }
+        input[type="range"]:disabled::-webkit-slider-thumb { background: #555; border-color: #333; cursor: default; }
+        input[type="range"]:disabled { opacity: 0.6; }
+
+        .footer-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+        }
+        .score-display {
+            font-size: 8rem;          /* ещё больше */
+            font-weight: 900;
+            color: var(--text-muted);
+            text-shadow: 0 0 10px rgba(255,255,255,0.05);
+            transition: color 0.2s, text-shadow 0.2s;
+            line-height: 1;
+        }
+        .score-display.gold {
+            color: var(--gold) !important;
+            text-shadow: 0 0 50px rgba(255, 215, 0, 0.7) !important;
+        }
+        .score-display .slash {
+            font-size: 1.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .score-display .total {
+            display: inline-block;
+        }
+        .btn-group { display: flex; gap: 10px; }
+        .action-btn { background: #ffffff; color: #000000; border: none; padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: bold; cursor: pointer; }
+        .save-btn { background: var(--blue-accent); color: #fff; }
+        .action-btn:active { transform: scale(0.95); }
+
+        #manual-add { display: none; margin-top: 12px; text-align: center; }
+        #manual-form { display: none; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-top: 16px; }
+        #manual-form input, #manual-form select { margin-bottom: 10px; width: 100%; box-sizing: border-box; }
+        .manual-extra { display: none; }
+        .hint { font-size: 0.75rem; color: var(--text-muted); margin-top: -6px; margin-bottom: 4px; }
+
+        /* Коллекция */
+        .collection-controls { display: flex; gap: 10px; flex-direction: column; }
+        .collection-sort { background: var(--card-bg); color: #fff; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; font-size: 0.9rem; outline: none; }
+
+        .history-list { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+        .history-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .history-item:hover { background: #25262b; }
+        .history-item img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; }
+        .history-item-info { display: flex; flex-direction: column; gap: 2px; flex-grow: 1; pointer-events: none; }
+        .history-item-title { font-size: 1rem; font-weight: bold; line-height: 1.2; }
+        .history-item-artist { font-size: 0.8rem; color: var(--text-muted); }
+        .history-item-type { font-size: 0.7rem; background: #2c2d31; padding: 0 6px; border-radius: 4px; margin-left: 6px; text-transform: uppercase; }
+        .history-item-right { display: flex; align-items: center; gap: 16px; pointer-events: none; }
+        .history-item-score {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+        .history-item-score.gold {
+            color: var(--gold);
+        }
+        .delete-btn {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--red-accent);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        .delete-btn:active { background: var(--red-accent); color: #fff; }
+        .empty-text { color: var(--text-muted); text-align: center; margin-top: 20px; font-size: 0.9rem; }
+
+        /* Нижнее меню */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #111113; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 10px 0 20px 0; z-index: 100; }
+        .nav-btn { background: none; border: none; color: var(--text-muted); font-size: 1rem; font-weight: bold; padding: 10px 20px; cursor: pointer; border-radius: 20px; transition: 0.2s; }
+        .nav-btn.active { background: var(--card-bg); color: var(--blue-accent); }
+
+        .mode-toggle { display: flex; gap: 10px; margin: 8px 0; }
+        .mode-btn { flex: 1; background: #444; color: #fff; border: none; padding: 10px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .mode-btn.active { background: var(--blue-accent); }
+        .mode-btn:active { transform: scale(0.95); }
+
+        /* Модальное окно */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+        }
+        .modal-close {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: var(--card-bg);
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            z-index: 5;
+        }
+        .modal-close:active { transform: scale(0.9); }
+        .modal-release-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .modal-release-header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .modal-release-header .info { display: flex; flex-direction: column; gap: 2px; }
+        .modal-release-header .info .title { font-size: 1.1rem; font-weight: bold; }
+        .modal-release-header .info .artist { color: var(--blue-accent); font-size: 0.9rem; }
+        .modal-release-header .info .meta { color: var(--text-muted); font-size: 0.8rem; }
+
+        .modal-sliders .sliders-group { background: transparent; border: none; padding: 0; }
+        .modal-sliders .sliders-group h2 { font-size: 1rem; margin-bottom: 2px; }
+        .modal-sliders .slider-container { gap: 4px; }
+        .modal-sliders .slider-header .value { font-size: 1rem; }
+        .modal-score {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--text-muted);
+            text-align: center;
+            margin: 12px 0;
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+        .modal-score.gold {
+            color: var(--gold) !important;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.4) !important;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+        .modal-actions .action-btn { flex: 1; }
+        .modal-actions .edit-btn { background: var(--purple-accent); color: #fff; }
+        .modal-actions .save-edit-btn { background: var(--blue-accent); color: #fff; display: none; }
+        .edit-mode .modal-actions .save-edit-btn { display: block; }
+        .edit-mode .modal-actions .edit-btn { display: none; }
+    </style>
+</head>
+<body>
+    <!-- ВКЛАДКА 1: ОЦЕНКА -->
+    <div id="tab-rating" class="tab-content active">
+        <div class="mode-toggle">
+            <button id="mode-album" class="mode-btn active">Альбом</button>
+            <button id="mode-track" class="mode-btn">Трек</button>
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Поиск..." autocomplete="off">
+            <div id="search-results" class="search-results"></div>
+            <div id="manual-add">
+                <button id="manual-btn" class="action-btn" style="background: var(--purple-accent); color: #fff;">➕ Добавить вручную</button>
+            </div>
+        </div>
+        <div id="selected-release" class="selected-release-card">
+            <img id="release-img" src="" alt="Cover">
+            <div class="release-details">
+                <div id="release-title" class="release-title">Название</div>
+                <div id="release-artist" class="release-artist">Исполнитель</div>
+                <div class="release-meta">
+                    <span id="release-type" class="badge">Альбом</span>
+                    <span id="release-extra"></span>
+                </div>
+            </div>
+        </div>
+        <div id="manual-form">
+            <h3 style="margin-top: 0;">Введите данные релиза</h3>
+            <input type="text" id="manual-title" placeholder="Название (обязательно)" class="search-input">
+            <input type="text" id="manual-artist" placeholder="Исполнитель (можно через запятую, &, feat.)" class="search-input">
+            <div class="hint">Укажите всех участников, если их несколько</div>
+            <select id="manual-type" class="search-input">
+                <option value="Альбом">Альбом</option>
+                <option value="Сингл">Сингл</option>
+                <option value="Трек">Трек</option>
+                <option value="EP">EP</option>
+            </select>
+            <div id="manual-album-fields" class="manual-extra">
+                <input type="date" id="manual-date" class="search-input" placeholder="Дата релиза">
+                <input type="number" id="manual-tracks" class="search-input" placeholder="Количество треков" min="1">
+            </div>
+            <div id="manual-track-fields" class="manual-extra">
+                <input type="text" id="manual-album-name" class="search-input" placeholder="Альбом (для трека)">
+                <input type="text" id="manual-duration" class="search-input" placeholder="Длительность (например, 3:45)">
+            </div>
+            <input type="text" id="manual-image" class="search-input" placeholder="Ссылка на обложку (необязательно)">
+            <div style="display: flex; gap: 10px;">
+                <button id="manual-confirm" class="action-btn save-btn">Подтвердить</button>
+                <button id="manual-cancel" class="action-btn" style="background: #444;">Отмена</button>
+            </div>
+        </div>
+        <div class="sliders-group blue-group">
+            <h2>Базовые показатели</h2> <!-- убрал (×1.4) -->
+            <div class="slider-container"><div class="slider-header"><span>Рифмы / Образы</span><span class="value" id="rhymes-val">5</span></div><input type="range" id="rhymes" min="1" max="10" value="5"></div>
+            <div class="slider-container"><div class="slider-header"><span>Структура / Ритмика</span><span class="value" id="structure-val">5</span></div><input type="range" id="structure" min="1" max="10" value="5"></div>
+            <div class="slider-container"><div class="slider-header"><span>Реализация стиля</span><span class="value" id="style-val">5</span></div><input type="range" id="style" min="1" max="10" value="5"></div>
+            <div class="slider-container"><div class="slider-header"><span>Индивидуальность / Харизма</span><span class="value" id="charisma-val">5</span></div><input type="range" id="charisma" min="1" max="10" value="5"></div>
+        </div>
+        <div class="sliders-group purple-group">
+            <h2>Атмосфера / Вайб</h2> <!-- убрал (от ×1.0 до ×1.6) -->
+            <div class="slider-container"><div class="slider-header"><span>Множитель</span><span class="value" id="vibe-val">1</span></div><input type="range" id="vibe" min="1" max="10" value="1"></div>
+        </div>
+        <div class="footer-score">
+            <div class="score-display" id="score-display">
+                <span class="total" id="total-score">28</span><span class="slash"> / 90</span>
+            </div>
+            <button class="action-btn save-btn" id="save-btn">Сохранить</button>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 2: КОЛЛЕКЦИЯ -->
+    <div id="tab-collection" class="tab-content">
+        <div class="collection-controls">
+            <input type="text" id="collection-search" class="collection-search" placeholder="Поиск в коллекции..." autocomplete="off">
+            <select id="collection-sort" class="collection-sort">
+                <option value="newest">Сначала новые (по дате добавления)</option>
+                <option value="highest">Сначала высокие баллы</option>
+                <option value="lowest">Сначала низкие баллы</option>
+            </select>
+        </div>
+        <div id="collection-list" class="history-list"></div>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="bottom-nav">
+        <button class="nav-btn active" data-tab="rating">Оценка</button>
+        <button class="nav-btn" data-tab="collection">Моя коллекция</button>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close-btn">✕</button>
+            <div class="modal-release-header">
+                <img id="modal-img" src="" alt="Cover">
+                <div class="info">
+                    <div class="title" id="modal-title">Название</div>
+                    <div class="artist" id="modal-artist">Исполнитель</div>
+                    <div class="meta" id="modal-meta">Альбом • 16 треков</div>
+                </div>
+            </div>
+            <div class="modal-sliders">
+                <div class="sliders-group blue-group">
+                    <h2>Базовые показатели</h2>
+                    <div class="slider-container"><div class="slider-header"><span>Рифмы / Образы</span><span class="value" id="modal-rhymes-val">5</span></div><input type="range" id="modal-rhymes" min="1" max="10" value="5" disabled></div>
+                    <div class="slider-container"><div class="slider-header"><span>Структура / Ритмика</span><span class="value" id="modal-structure-val">5</span></div><input type="range" id="modal-structure" min="1" max="10" value="5" disabled></div>
+                    <div class="slider-container"><div class="slider-header"><span>Реализация стиля</span><span class="value" id="modal-style-val">5</span></div><input type="range" id="modal-style" min="1" max="10" value="5" disabled></div>
+                    <div class="slider-container"><div class="slider-header"><span>Индивидуальность / Харизма</span><span class="value" id="modal-charisma-val">5</span></div><input type="range" id="modal-charisma" min="1" max="10" value="5" disabled></div>
+                </div>
+                <div class="sliders-group purple-group">
+                    <h2>Атмосфера / Вайб</h2>
+                    <div class="slider-container"><div class="slider-header"><span>Множитель</span><span class="value" id="modal-vibe-val">1</span></div><input type="range" id="modal-vibe" min="1" max="10" value="1" disabled></div>
+                </div>
+            </div>
+            <div class="modal-score" id="modal-score">28 / 90</div>
+            <div class="modal-actions">
+                <button class="action-btn edit-btn" id="modal-edit-btn">✏️ Изменить</button>
+                <button class="action-btn save-edit-btn" id="modal-save-edit-btn" style="display:none;">💾 Сохранить изменения</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        const vibeMultipliers = [1.0000, 1.0675, 1.1349, 1.2024, 1.2699, 1.3373, 1.4048, 1.4723, 1.5397, 1.6072];
+        let currentRelease = null;
+        let searchMode = 'album';
+        let historyData = [];
+
+        // CloudStorage обёртки
+        function cloudGet(key) {
+            return new Promise((resolve) => {
+                tg.CloudStorage.getItem(key, (err, value) => {
+                    if (err) resolve(null);
+                    else resolve(value);
+                });
+            });
+        }
+        function cloudSet(key, value) {
+            return new Promise((resolve) => {
+                tg.CloudStorage.setItem(key, value, (err) => {
+                    resolve(!err);
+                });
+            });
+        }
+
+        async function loadHistory() {
+            const stored = await cloudGet('rzt_history');
+            if (stored) {
+                try { historyData = JSON.parse(stored); } catch(e) { historyData = []; }
+            } else {
+                historyData = [];
+            }
+            renderCollection();
+        }
+        async function saveHistory() {
+            await cloudSet('rzt_history', JSON.stringify(historyData));
+        }
+        loadHistory();
+
+        // Вкладки
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+                if (btn.dataset.tab === 'collection') renderCollection();
+            });
+        });
+
+        // Переключатель режимов
+        document.getElementById('mode-album').addEventListener('click', function() {
+            searchMode = 'album';
+            document.getElementById('mode-album').classList.add('active');
+            document.getElementById('mode-track').classList.remove('active');
+            clearSearch();
+        });
+        document.getElementById('mode-track').addEventListener('click', function() {
+            searchMode = 'track';
+            document.getElementById('mode-track').classList.add('active');
+            document.getElementById('mode-album').classList.remove('active');
+            clearSearch();
+        });
+
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('search-results').style.display = 'none';
+            document.getElementById('selected-release').style.display = 'none';
+            currentRelease = null;
+            document.getElementById('manual-add').style.display = 'none';
+            document.getElementById('manual-form').style.display = 'none';
+        }
+
+        // Поиск Deezer (JSONP)
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
+        let searchTimeout = null;
+        const manualAdd = document.getElementById('manual-add');
+        const manualForm = document.getElementById('manual-form');
+
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            const query = searchInput.value.trim();
+            document.getElementById('selected-release').style.display = 'none';
+            currentRelease = null;
+            manualAdd.style.display = 'none';
+            manualForm.style.display = 'none';
+
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            searchResults.innerHTML = '<div class="search-msg">Ищем...</div>';
+            searchResults.style.display = 'block';
+
+            searchTimeout = setTimeout(() => {
+                let safeQuery = query.toLowerCase()
+                    .replace(/\$/g, 's')
+                    .replace(/ё/g, 'е')
+                    .replace(/[^a-zа-я0-9\s]/gi, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                if (safeQuery.length === 0) safeQuery = query;
+                if (searchMode === 'album') {
+                    searchDeezerAlbums(safeQuery);
+                } else {
+                    searchDeezerTracks(safeQuery);
+                }
+            }, 500);
+        });
+
+        function searchDeezerAlbums(query) {
+            const term = encodeURIComponent(query);
+            const script = document.createElement('script');
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                if (data && data.data) {
+                    showAlbumResults(data.data);
+                } else {
+                    showAlbumResults([]);
+                }
+            };
+            script.src = `https://api.deezer.com/search/album?q=${term}&limit=25&output=jsonp&callback=${callbackName}`;
+            document.body.appendChild(script);
+        }
+
+        function searchDeezerTracks(query) {
+            const term = encodeURIComponent(query);
+            const script = document.createElement('script');
+            const callbackName = 'jsonp_callback_' + Date.now();
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                if (data && data.data) {
+                    showTrackResults(data.data);
+                } else {
+                    showTrackResults([]);
+                }
+            };
+            script.src = `https://api.deezer.com/search?q=${term}&limit=25&output=jsonp&callback=${callbackName}`;
+            document.body.appendChild(script);
+        }
+
+        function showAlbumResults(results) {
+            searchResults.innerHTML = '';
+            manualAdd.style.display = 'none';
+            if (!results || results.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="search-msg" style="color: var(--red-accent);">Ничего не найдено</div>
+                    <div class="search-msg" style="font-size: 0.8rem;">Попробуйте ввести другое название или добавьте вручную</div>
+                `;
+                manualAdd.style.display = 'block';
+                return;
+            }
+            const items = results.map(album => ({
+                title: album.title,
+                artist: album.artist.name,
+                image: album.cover_medium || 'https://via.placeholder.com/60',
+                highResImage: album.cover_big || album.cover_medium || '',
+                type: 'Альбом',
+                releaseDate: album.release_date ? new Date(album.release_date).toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Дата не указана',
+                trackCount: album.nb_tracks || '?',
+                extra: `${album.nb_tracks || '?'} треков • ${album.release_date ? new Date(album.release_date).getFullYear() : ''}`
+            }));
+            renderSearchItems(items);
+        }
+
+        function showTrackResults(results) {
+            searchResults.innerHTML = '';
+            manualAdd.style.display = 'none';
+            if (!results || results.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="search-msg" style="color: var(--red-accent);">Ничего не найдено</div>
+                    <div class="search-msg" style="font-size: 0.8rem;">Попробуйте ввести другое название или добавьте вручную</div>
+                `;
+                manualAdd.style.display = 'block';
+                return;
+            }
+            const items = results.map(track => {
+                const dur = track.duration || 0;
+                const minutes = Math.floor(dur / 60);
+                const seconds = String(dur % 60).padStart(2, '0');
+                return {
+                    title: track.title,
+                    artist: track.artist.name,
+                    image: track.album.cover_medium || 'https://via.placeholder.com/60',
+                    highResImage: track.album.cover_big || track.album.cover_medium || '',
+                    type: 'Трек',
+                    albumName: track.album.title,
+                    duration: `${minutes}:${seconds}`,
+                    extra: `${track.album.title} • ${minutes}:${seconds}`
+                };
+            });
+            renderSearchItems(items);
+        }
+
+        function renderSearchItems(items) {
+            const seen = new Set();
+            const unique = [];
+            items.forEach(item => {
+                const key = `${item.title}|${item.artist}`;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    unique.push(item);
+                }
+            });
+            const limited = unique.slice(0, 20);
+            limited.forEach(data => {
+                const div = document.createElement('div');
+                div.className = 'search-item';
+                div.innerHTML = `
+                    <img src="${data.image}" alt="cover">
+                    <div class="search-item-info">
+                        <div class="search-item-title">${data.title}</div>
+                        <div class="search-item-artist">${data.artist} • ${data.extra}</div>
+                    </div>
+                `;
+                div.addEventListener('click', () => {
+                    searchResults.style.display = 'none';
+                    searchInput.value = '';
+                    searchInput.blur();
+                    manualAdd.style.display = 'none';
+                    manualForm.style.display = 'none';
+
+                    currentRelease = {
+                        title: data.title,
+                        artist: data.artist,
+                        image: data.highResImage,
+                        type: data.type,
+                        releaseDate: data.releaseDate || null,
+                        trackCount: data.trackCount || null,
+                        albumName: data.albumName || null,
+                        duration: data.duration || null
+                    };
+
+                    document.getElementById('release-img').src = currentRelease.image;
+                    document.getElementById('release-title').textContent = currentRelease.title;
+                    document.getElementById('release-artist').textContent = currentRelease.artist;
+                    document.getElementById('release-type').textContent = currentRelease.type;
+
+                    let extraText = '';
+                    if (currentRelease.type === 'Альбом') {
+                        extraText = `${currentRelease.releaseDate || '—'} • ${currentRelease.trackCount || '?'} треков`;
+                    } else {
+                        extraText = `${currentRelease.albumName || '—'} • ${currentRelease.duration || '—'}`;
+                    }
+                    document.getElementById('release-extra').textContent = extraText;
+                    document.getElementById('selected-release').style.display = 'flex';
+                });
+                searchResults.appendChild(div);
+            });
+            searchResults.style.display = 'block';
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) searchResults.style.display = 'none';
+        });
+
+        // Ручное добавление
+        document.getElementById('manual-btn').addEventListener('click', () => {
+            manualForm.style.display = 'block';
+            manualAdd.style.display = 'none';
+            searchResults.style.display = 'none';
+            toggleManualFields(document.getElementById('manual-type').value);
+        });
+
+        document.getElementById('manual-type').addEventListener('change', function() {
+            toggleManualFields(this.value);
+        });
+
+        function toggleManualFields(type) {
+            const albumFields = document.getElementById('manual-album-fields');
+            const trackFields = document.getElementById('manual-track-fields');
+            if (type === 'Трек') {
+                albumFields.style.display = 'none';
+                trackFields.style.display = 'block';
+            } else {
+                albumFields.style.display = 'block';
+                trackFields.style.display = 'none';
+            }
+        }
+
+        document.getElementById('manual-cancel').addEventListener('click', () => {
+            manualForm.style.display = 'none';
+        });
+
+        document.getElementById('manual-confirm').addEventListener('click', () => {
+            const title = document.getElementById('manual-title').value.trim();
+            const artist = document.getElementById('manual-artist').value.trim();
+            if (!title || !artist) {
+                tg.showAlert('Заполните название и исполнителя!');
+                return;
+            }
+            const type = document.getElementById('manual-type').value;
+            const image = document.getElementById('manual-image').value.trim() || 'https://via.placeholder.com/300';
+
+            let releaseDate = null, trackCount = null, albumName = null, duration = null;
+
+            if (type === 'Трек') {
+                albumName = document.getElementById('manual-album-name').value.trim() || '—';
+                duration = document.getElementById('manual-duration').value.trim() || '—';
+            } else {
+                const dateVal = document.getElementById('manual-date').value;
+                if (dateVal) {
+                    const d = new Date(dateVal);
+                    if (!isNaN(d)) releaseDate = d.toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric' });
+                }
+                trackCount = document.getElementById('manual-tracks').value || '?';
+            }
+
+            currentRelease = {
+                title, artist, image, type,
+                releaseDate, trackCount, albumName, duration
+            };
+
+            document.getElementById('release-img').src = currentRelease.image;
+            document.getElementById('release-title').textContent = currentRelease.title;
+            document.getElementById('release-artist').textContent = currentRelease.artist;
+            document.getElementById('release-type').textContent = currentRelease.type;
+
+            let extraText = '';
+            if (currentRelease.type === 'Трек') {
+                extraText = `${currentRelease.albumName || '—'} • ${currentRelease.duration || '—'}`;
+            } else {
+                extraText = `${currentRelease.releaseDate || '—'} • ${currentRelease.trackCount || '?'} треков`;
+            }
+            document.getElementById('release-extra').textContent = extraText;
+            document.getElementById('selected-release').style.display = 'flex';
+            manualForm.style.display = 'none';
+            searchInput.value = '';
+            tg.showAlert('Релиз добавлен! Теперь можно оценивать.');
+        });
+
+        // --- Расчёт баллов (основной) ---
+        const inputs = { rhymes: document.getElementById('rhymes'), structure: document.getElementById('structure'), style: document.getElementById('style'), charisma: document.getElementById('charisma'), vibe: document.getElementById('vibe') };
+        const displays = { rhymes: document.getElementById('rhymes-val'), structure: document.getElementById('structure-val'), style: document.getElementById('style-val'), charisma: document.getElementById('charisma-val'), vibe: document.getElementById('vibe-val'), total: document.getElementById('total-score') };
+        const scoreDisplay = document.getElementById('score-display');
+
+        function updateScoreColor(score) {
+            if (score === 90) {
+                scoreDisplay.classList.add('gold');
+                console.log('✅ Добавлен класс gold для оценки 90/90');
+            } else {
+                scoreDisplay.classList.remove('gold');
+            }
+        }
+
+        function calculate() {
+            let baseSum = parseInt(inputs.rhymes.value) + parseInt(inputs.structure.value) + parseInt(inputs.style.value) + parseInt(inputs.charisma.value);
+            let score = Math.round((baseSum * 1.4) * vibeMultipliers[parseInt(inputs.vibe.value) - 1]);
+            displays.total.textContent = score;
+            updateScoreColor(score);
+
+            Object.keys(inputs).forEach(key => {
+                displays[key].textContent = inputs[key].value;
+                const percent = ((inputs[key].value - 1) / 9) * 100;
+                inputs[key].style.background = `linear-gradient(to right, ${key === 'vibe' ? 'var(--purple-accent)' : 'var(--blue-accent)'} ${percent}%, #2d2e33 ${percent}%)`;
+            });
+        }
+        Object.values(inputs).forEach(input => input.addEventListener('input', calculate));
+        calculate();
+
+        // --- СОХРАНЕНИЕ НОВОЙ ОЦЕНКИ ---
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            if (!currentRelease) return tg.showAlert("Сначала найдите или добавьте релиз!");
+            
+            const newItem = {
+                id: Date.now(),
+                title: currentRelease.title,
+                artist: currentRelease.artist,
+                type: currentRelease.type,
+                score: parseInt(displays.total.textContent),
+                image: currentRelease.image || 'https://via.placeholder.com/40',
+                sliders: {
+                    rhymes: parseInt(inputs.rhymes.value),
+                    structure: parseInt(inputs.structure.value),
+                    style: parseInt(inputs.style.value),
+                    charisma: parseInt(inputs.charisma.value),
+                    vibe: parseInt(inputs.vibe.value)
+                },
+                extraInfo: {
+                    releaseDate: currentRelease.releaseDate || null,
+                    trackCount: currentRelease.trackCount || null,
+                    albumName: currentRelease.albumName || null,
+                    duration: currentRelease.duration || null
+                }
+            };
+            
+            historyData.push(newItem);
+            await saveHistory();
+            tg.showPopup({ title: 'Готово', message: 'Оценка сохранена в облако Telegram!', buttons: [{type: 'ok'}] });
+        });
+
+        // --- КОЛЛЕКЦИЯ ---
+        const collectionSearch = document.getElementById('collection-search');
+        const collectionSort = document.getElementById('collection-sort');
+        const collectionList = document.getElementById('collection-list');
+
+        function renderCollection() {
+            const query = collectionSearch.value.toLowerCase();
+            const sortMethod = collectionSort.value;
+            let data = [...historyData];
+            if (query) data = data.filter(item => item.title.toLowerCase().includes(query) || item.artist.toLowerCase().includes(query));
+            if (sortMethod === 'highest') data.sort((a, b) => parseInt(b.score) - parseInt(a.score));
+            else if (sortMethod === 'lowest') data.sort((a, b) => parseInt(a.score) - parseInt(b.score));
+            else data.sort((a, b) => b.id - a.id);
+
+            collectionList.innerHTML = '';
+            if (data.length === 0) {
+                collectionList.innerHTML = '<div class="empty-text">Ничего не найдено</div>';
+                return;
+            }
+            data.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                const imgSrc = item.image || 'https://via.placeholder.com/40';
+                const scoreClass = item.score === 90 ? 'gold' : '';
+                div.innerHTML = `
+                    <img src="${imgSrc}" alt="cover">
+                    <div class="history-item-info">
+                        <div class="history-item-title">${item.title} <span class="history-item-type">${item.type}</span></div>
+                        <div class="history-item-artist">${item.artist}</div>
+                    </div>
+                    <div class="history-item-right">
+                        <div class="history-item-score ${scoreClass}">${item.score}/90</div>
+                        <button class="delete-btn" onclick="deleteItem(${item.id})">×</button>
+                    </div>
+                `;
+                div.addEventListener('click', (e) => {
+                    if (e.target.closest('.delete-btn')) return;
+                    openModal(item.id);
+                });
+                collectionList.appendChild(div);
+            });
+        }
+
+        window.deleteItem = async function(id) {
+            tg.showConfirm("Удалить эту оценку?", async (confirmed) => {
+                if (confirmed) {
+                    historyData = historyData.filter(item => item.id !== id);
+                    await saveHistory();
+                    renderCollection();
+                }
+            });
+        };
+
+        collectionSearch.addEventListener('input', renderCollection);
+        collectionSort.addEventListener('change', renderCollection);
+
+        // --- МОДАЛЬНОЕ ОКНО ---
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalClose = document.getElementById('modal-close-btn');
+        let currentModalItemId = null;
+        let isEditMode = false;
+
+        function openModal(id) {
+            const item = historyData.find(el => el.id === id);
+            if (!item) return;
+            currentModalItemId = id;
+            isEditMode = false;
+
+            document.getElementById('modal-img').src = item.image || 'https://via.placeholder.com/60';
+            document.getElementById('modal-title').textContent = item.title;
+            document.getElementById('modal-artist').textContent = item.artist;
+            let metaText = `${item.type}`;
+            if (item.extraInfo && item.extraInfo.trackCount) metaText += ` • ${item.extraInfo.trackCount} треков`;
+            if (item.extraInfo && item.extraInfo.releaseDate) metaText += ` • ${item.extraInfo.releaseDate}`;
+            document.getElementById('modal-meta').textContent = metaText;
+
+            const sl = item.sliders || { rhymes: 5, structure: 5, style: 5, charisma: 5, vibe: 1 };
+            const modalInputs = {
+                rhymes: document.getElementById('modal-rhymes'),
+                structure: document.getElementById('modal-structure'),
+                style: document.getElementById('modal-style'),
+                charisma: document.getElementById('modal-charisma'),
+                vibe: document.getElementById('modal-vibe')
+            };
+            const modalDisplays = {
+                rhymes: document.getElementById('modal-rhymes-val'),
+                structure: document.getElementById('modal-structure-val'),
+                style: document.getElementById('modal-style-val'),
+                charisma: document.getElementById('modal-charisma-val'),
+                vibe: document.getElementById('modal-vibe-val')
+            };
+            modalInputs.rhymes.value = sl.rhymes;
+            modalInputs.structure.value = sl.structure;
+            modalInputs.style.value = sl.style;
+            modalInputs.charisma.value = sl.charisma;
+            modalInputs.vibe.value = sl.vibe;
+            modalDisplays.rhymes.textContent = sl.rhymes;
+            modalDisplays.structure.textContent = sl.structure;
+            modalDisplays.style.textContent = sl.style;
+            modalDisplays.charisma.textContent = sl.charisma;
+            modalDisplays.vibe.textContent = sl.vibe;
+
+            Object.keys(modalInputs).forEach(key => {
+                const val = parseInt(modalInputs[key].value);
+                const percent = ((val - 1) / 9) * 100;
+                const color = key === 'vibe' ? 'var(--purple-accent)' : 'var(--blue-accent)';
+                modalInputs[key].style.background = `linear-gradient(to right, ${color} ${percent}%, #2d2e33 ${percent}%)`;
+            });
+
+            const baseSum = sl.rhymes + sl.structure + sl.style + sl.charisma;
+            const score = Math.round((baseSum * 1.4) * vibeMultipliers[sl.vibe - 1]);
+            const modalScore = document.getElementById('modal-score');
+            modalScore.textContent = `${score} / 90`;
+            if (score === 90) modalScore.classList.add('gold');
+            else modalScore.classList.remove('gold');
+
+            Object.values(modalInputs).forEach(inp => inp.disabled = true);
+            document.getElementById('modal-edit-btn').style.display = 'block';
+            document.getElementById('modal-save-edit-btn').style.display = 'none';
+            document.querySelector('.modal-content').classList.remove('edit-mode');
+            isEditMode = false;
+
+            modalOverlay.classList.add('active');
+        }
+
+        modalClose.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) modalOverlay.classList.remove('active');
+        });
+
+        document.getElementById('modal-edit-btn').addEventListener('click', () => {
+            if (!currentModalItemId) return;
+            isEditMode = true;
+            const modalInputs = {
+                rhymes: document.getElementById('modal-rhymes'),
+                structure: document.getElementById('modal-structure'),
+                style: document.getElementById('modal-style'),
+                charisma: document.getElementById('modal-charisma'),
+                vibe: document.getElementById('modal-vibe')
+            };
+            Object.values(modalInputs).forEach(inp => inp.disabled = false);
+            document.getElementById('modal-edit-btn').style.display = 'none';
+            document.getElementById('modal-save-edit-btn').style.display = 'block';
+            document.querySelector('.modal-content').classList.add('edit-mode');
+        });
+
+        document.getElementById('modal-save-edit-btn').addEventListener('click', async () => {
+            if (!currentModalItemId) return;
+            const modalInputs = {
+                rhymes: document.getElementById('modal-rhymes'),
+                structure: document.getElementById('modal-structure'),
+                style: document.getElementById('modal-style'),
+                charisma: document.getElementById('modal-charisma'),
+                vibe: document.getElementById('modal-vibe')
+            };
+            const newSliders = {
+                rhymes: parseInt(modalInputs.rhymes.value),
+                structure: parseInt(modalInputs.structure.value),
+                style: parseInt(modalInputs.style.value),
+                charisma: parseInt(modalInputs.charisma.value),
+                vibe: parseInt(modalInputs.vibe.value)
+            };
+            const item = historyData.find(el => el.id === currentModalItemId);
+            if (!item) return;
+            item.sliders = newSliders;
+            const baseSum = newSliders.rhymes + newSliders.structure + newSliders.style + newSliders.charisma;
+            const score = Math.round((baseSum * 1.4) * vibeMultipliers[newSliders.vibe - 1]);
+            item.score = score;
+            const modalScore = document.getElementById('modal-score');
+            modalScore.textContent = `${score} / 90`;
+            if (score === 90) modalScore.classList.add('gold');
+            else modalScore.classList.remove('gold');
+            await saveHistory();
+            renderCollection();
+
+            Object.values(modalInputs).forEach(inp => inp.disabled = true);
+            document.getElementById('modal-edit-btn').style.display = 'block';
+            document.getElementById('modal-save-edit-btn').style.display = 'none';
+            document.querySelector('.modal-content').classList.remove('edit-mode');
+            isEditMode = false;
+            tg.showAlert('Оценка обновлена!');
+        });
+
+        // Обновление балла в модалке при редактировании
+        const modalSliderIds = ['modal-rhymes', 'modal-structure', 'modal-style', 'modal-charisma', 'modal-vibe'];
+        modalSliderIds.forEach(id => {
+            const inp = document.getElementById(id);
+            inp.addEventListener('input', () => {
+                if (!isEditMode) return;
+                const val = parseInt(inp.value);
+                const displayId = id.replace('modal-', '') + '-val';
+                document.getElementById('modal-' + displayId).textContent = val;
+                const percent = ((val - 1) / 9) * 100;
+                const color = id === 'modal-vibe' ? 'var(--purple-accent)' : 'var(--blue-accent)';
+                inp.style.background = `linear-gradient(to right, ${color} ${percent}%, #2d2e33 ${percent}%)`;
+                const rhymes = parseInt(document.getElementById('modal-rhymes').value);
+                const structure = parseInt(document.getElementById('modal-structure').value);
+                const style = parseInt(document.getElementById('modal-style').value);
+                const charisma = parseInt(document.getElementById('modal-charisma').value);
+                const vibe = parseInt(document.getElementById('modal-vibe').value);
+                const baseSum = rhymes + structure + style + charisma;
+                const score = Math.round((baseSum * 1.4) * vibeMultipliers[vibe - 1]);
+                const modalScore = document.getElementById('modal-score');
+                modalScore.textContent = `${score} / 90`;
+                if (score === 90) modalScore.classList.add('gold');
+                else modalScore.classList.remove('gold');
+            });
+        });
+
+        renderCollection();
+    </script>
+</body>
+</html>
